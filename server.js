@@ -9,13 +9,32 @@ const io = require('socket.io')(http, {
   },
 });
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   console.log(`Client connected [id=${socket.id}]`);
-  socket.emit('addUser', { id: socket.id, isSelf: true });
+  let sockets;
+
+  try {
+    // get all existing sockets
+    sockets = await io.fetchSockets();
+    sockets = sockets.map((s) => {
+      return { id: s.id, data: s.data };
+    });
+
+    // tell yourself you exist
+    socket.emit('addUser', { id: socket.id, isSelf: true, others: sockets });
+  } catch (e) {
+    console.log(e);
+  }
+  
+  // tell everyone else you exist
   socket.broadcast.emit('addUser', { id: socket.id, isSelf: false });
 
   // Change username
   socket.on('nameChange', (data) => {
+    console.log("trying a name change");
+    console.log(data);
+    socket.data.username = data.name;
+    console.log(socket.data.username);
     io.emit('nameChange', { id: socket.id, name: data.name });
   });
 
@@ -23,7 +42,7 @@ io.on('connection', (socket) => {
   // Type message + send it
   socket.on('message', (data) => {
     console.log('message: ', JSON.stringify(data));
-    io.emit('message', { text: data.msg, time: new Date().toISOString() });
+    io.emit('message', { user: socket.id, text: data.msg, time: new Date().toISOString() });
   });
 
 

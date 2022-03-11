@@ -3,7 +3,7 @@
     <h4>You are: 
       <span v-show="!changeActive" class="username-display" @click="openField">{{ name }}</span>
       <form v-show="changeActive" class="username-change" action="" @submit.prevent="changeName">
-        <input type="text" class="username-text" ref="textInput" v-model="name" />
+        <input type="text" class="username-text" ref="textInput" v-model="tempName" />
       </form>
     </h4>
   </div>
@@ -13,19 +13,31 @@
 export default {
   data() {
     return {
-      name: "[[name]]",
+      tempName: "",
       changeActive: false,
+    }
+  },
+  computed: {
+    name() {
+      const n = this.$store.getters.getOwnUsername;
+      // console.log("our name?");
+      // console.log(n);
+      return n;
     }
   },
   methods: {
     openField() {
-      this.name = "";
+      this.tempName = "";
       this.changeActive = true;
       this.$nextTick(() => this.$refs.textInput.focus())
     },
     changeName() {
       this.changeActive = false;
-      this.$socket.client.emit("nameChange", { name: this.name });
+      if (this.tempName != "") {
+        this.$socket.client.emit("nameChange", { name: this.tempName });
+      } else {
+        console.log("needs actual letters!");
+      }
     }
   }
 }
@@ -54,9 +66,5 @@ export default {
     background-color: yellow;
     cursor: pointer;
   }
-
-  // input {
-  //   display: none;
-  // }
 }
 </style>

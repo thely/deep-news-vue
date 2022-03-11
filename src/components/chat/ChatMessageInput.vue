@@ -14,9 +14,14 @@ export default {
       message: "",
     }
   },
+  computed: {
+    selfID() {
+      return this.$store.state.selfID;
+    }
+  },
   methods: {
     addMessage() {
-      this.$socket.client.emit("message", { msg: this.message });
+      this.$socket.client.emit("message", { msg: this.message, id: this.selfID });
       this.message = "";
     }
   },
