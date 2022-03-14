@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     name() {
-      const n = this.$store.getters.getOwnUsername;
+      const n = this.$store.getters["chat/getOwnUsername"];
       // console.log("our name?");
       // console.log(n);
       return n;

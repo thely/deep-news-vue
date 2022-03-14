@@ -13,7 +13,7 @@
 export default {
   computed: {
     messages() {
-      return this.$store.state.messages;
+      return this.$store.state.chat.messages;
     }
   },
   watch: {

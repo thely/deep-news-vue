@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     selfID() {
-      return this.$store.state.selfID;
+      return this.$store.state.chat.selfID;
     }
   },
   methods: {

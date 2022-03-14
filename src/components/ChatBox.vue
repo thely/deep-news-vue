@@ -17,11 +17,6 @@ export default {
     ChatMessageInput,
     ChatMessageList
   },
-  computed: {
-    messages() {
-      return this.$store.state.messages;
-    }
-  },
 }
 </script>
 
