@@ -1,11 +1,13 @@
 <template>
-  <div class="hydra-container">
+  <div class="hydra-container" :data-loaders="loaders">
     <canvas id="hydra-large" class="patch"></canvas>
     <canvas id="hydra-small" class="patch"></canvas>
+    <span :data-freq="freqVal"></span>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import HydraHandle from "../utils/HydraPatch.js";
 let hydra;
 
@@ -16,28 +18,55 @@ export default {
     }
   },
   computed: {
-    videos() {
-      return this.$store.getters["videos/getClasses"];
+    videosLoaded() {
+      const loaded = this.$store.state.videos.loadedOnce;
+      return loaded;
     },
-    currentVideo() {
-      const index = this.$store.state.videos.playerIndex;
-      // console.log("now playing: " + index);
-      return index;
-    }
+    loaders() {
+      const players = JSON.parse(JSON.stringify(this.$store.state.videos.loaders));
+      return players;
+    },
+    ...mapState({ 
+      freqVal: 'freqVal',
+    }),  
   },
   watch: {
-    currentVideo(newV) {
-      hydra.videoNotify(this.players[newV]);
+    loaders(newV, oldV) {
+      for (let i = 0; i < newV.length; i++) {
+        for (let key of Object.keys(newV[i])) {
+          if (newV[i][key].toString() != oldV[i][key].toString()) {
+            this.switchHydraVideo({ loader: i, player: newV[i].nowPlaying });
+          }
+        }
+      }
+    },
+    freqVal(newV) {
+      hydra.runAll(parseInt(newV));
+    },
+    videosLoaded(newV) {
+      for (let i = 0; i < newV.length; i++) {
+        if (newV[i] == true) {
+          this.switchHydraVideo({ loader: i, player: 0 });
+          hydra.runOne(i);
+        }
+      }
     }
   },
   mounted() {
     hydra = new HydraHandle();
-    // console.log(hydra);
-    // console.log(this.videos);
 
-    this.players = document.querySelectorAll(this.videos.join(", "));
-    hydra.runAll();
+    this.players = [...document.querySelectorAll(".loader-single")];
   },
+  methods: {
+    getPlayer(index, pindex) {
+      const player = this.players.filter((p) => p.dataset.index == index && p.dataset.pindex == pindex)[0];
+      return player;
+    },
+    switchHydraVideo(newV) {
+      const player = this.getPlayer(newV.loader, newV.player);
+      hydra.videoNotify(player, newV.loader);
+    }
+  }
 }
 </script>
 

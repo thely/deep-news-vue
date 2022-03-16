@@ -1,14 +1,14 @@
+import Vue from "vue";
+
 const videos = {
   namespaced: true,
   state: () => ({
     urlBase: "./assets",
-    // players: Array(2).fill({ ...playerBase }),
-    players: [
-      { fileIndex: 0, playing: false, className: ".video-0" },
-      { fileIndex: 0, playing: false, className: ".video-1" }
+    loaders: [
+      { players: [0, 0], nowPlaying: -1 },
+      { players: [2, 2], nowPlaying: -1 }
     ],
-    fileIndex: 0,
-    playerIndex: 0,
+    loadedOnce: [false, false],
     files: ["vid1.mp4", "vid2.mp4", "vid3.1.mp4", "vid3.2.mp4", "vid3.3.mp4"]
   }),
 
@@ -19,16 +19,22 @@ const videos = {
       state.players[obj.i][obj.field] = obj.value;
     },
 
-    updateActivePlayer(state, index) {
-      // console.log("now player: " + index);
-      state.playerIndex = index;
+    updateActivePlayer(state, obj) {
+      state.loaders[obj.loader].nowPlaying = obj.player;
+    },
+
+    updateHasLoadedOnce(state, index) {
+      state.loadedOnce[index] = true;
+
+      Vue.set(state.loadedOnce, index, true);
     },
 
     // Set upcoming player to next video, following the playingIndex value
-    toNextFile(state, index) {
-      const fileIndex = (state.fileIndex + 1) % state.files.length;
-      state.players[index].fileIndex = fileIndex;
-      state.fileIndex = fileIndex;
+    toNextFile(state, obj) {
+      const loader = state.loaders[obj.loader];
+      const fileIndex = (loader.players[obj.player] + 1) % state.files.length;
+
+      Vue.set(state.loaders[obj.loader].players, obj.player, fileIndex);
     },
 
     // Set to random file not currently in either player, ignore playingIndex
@@ -45,14 +51,12 @@ const videos = {
   },
 
   getters: {
-    getFilename: (state) => (index) => {
-      // console.log("inside getFilename: " + index);
-      // console.log("my file will be: " + state.players[index].fileIndex);
-      return state.urlBase + "/" + state.files[state.players[index].fileIndex];
+    getFilename: (state) => (index, pindex) => {
+      const url = state.urlBase + "/" + state.files[state.loaders[index].players[pindex]];
+      return url;
     },
     getClasses: (state) => {
       const classes = state.players.map(({ className }) => { return className; });
-      // console.log(classes);
       return classes;
     }
   }

@@ -22,17 +22,25 @@ class HydraHandle {
     return h;
   }
 
-  runAll() {
-    this.run3(this.patches[0]);
+  runAll(num) {
+    this.run3(this.patches[0], num);
     this.run4(this.patches[1]);
   }
 
-  run(h, base) {
-    base = base ? base : 4; // alter value to go faster
-
-    h.osc(base, 0.1, 1.2).diff(h.src(h.s0)).out();
-    // h.osc(({time}) => (100 * Math.sin(time * 0.1))).out();
+  runOne(index) {
+    if (index == 0) {
+      this.run3(this.patches[0]);
+    } else {
+      this.run4(this.patches[1]);
+    }
   }
+
+  // run(h, base) {
+  //   base = base ? base : 4; // alter value to go faster
+
+  //   h.osc(base, 0.1, 1.2).diff(h.src(h.s0)).out();
+  //   // h.osc(({time}) => (100 * Math.sin(time * 0.1))).out();
+  // }
 
   run1(h) {
     h.src(h.s0)
@@ -64,10 +72,13 @@ class HydraHandle {
       h.render(h.o0)
   }
 
-  run3(h) {
+  run3(h, base) {
+    base = base ? base : 1.5;
+    // const post = base * 10;
+    
     h.src(h.o0)
       .modulate(
-        h.osc(10,0,1.5).modulate(h.src(h.s0).sub(h.gradient()),1.5).brightness(-0.5)
+        h.osc(10,0,base).modulate(h.src(h.s0).sub(h.gradient()),base).brightness(-0.5)
       ,0.003)
       .blend(h.src(h.s0).hue(({time}) => Math.sin(time*0.001)).posterize(20,4).contrast(1.5),0.01)
       .out(h.o0)
@@ -96,10 +107,9 @@ class HydraHandle {
       .out(h.o0)
   }
 
-  videoNotify(player) {
-    // console.log("notify hydra");
-    this.patches[0].s0.init({ src: player, dynamic: true });
-    this.patches[1].s0.init({ src: player, dynamic: true });
+  videoNotify(player, patch) {
+    // console.log("notify hydra: video " + player + " to patch " + patch);
+    this.patches[patch].s0.init({ src: player, dynamic: true });
   }
 }
 
