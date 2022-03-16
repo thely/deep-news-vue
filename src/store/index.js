@@ -12,9 +12,13 @@ export default new Vuex.Store({
     chat,
   },
   state: () => ({ 
+    freqVal: 1.5,
   }),
   mutations: {
-  
+    updateFreq(state, val) {
+      state.freqVal = val;
+      console.log(state.freqVal);
+    }
   },
   getters: {
    

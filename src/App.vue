@@ -4,6 +4,7 @@
     <ChatBox />
     <VideoLoader />
     <Hydra />
+    <Controls />
   </div>
 </template>
 
@@ -12,21 +13,20 @@
 import Hydra from './components/Hydra.vue'
 import VideoLoader from './components/VideoLoader.vue'
 import ChatBox from './components/ChatBox.vue'
+import Controls from './components/Controls.vue'
 
 export default {
   name: 'App',
   components: {
     Hydra,
     VideoLoader,
-    ChatBox
+    ChatBox,
+    Controls
   },
   sockets: {
     connect() {
       console.log("connected");
     },
-    // message(data) {
-    //   this.messages.push(data);
-    // }
   }
 }
 </script>

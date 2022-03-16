@@ -16,7 +16,8 @@
     "socket.io-client": "^4.4.1",
     "vue": "^2.6.11",
     "vue-socket.io-extended": "^4.2.0",
-    "vuex": "^3.6.2"
+    "vuex": "^3.6.2",
+    "xebra.js": "^1.2.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.12",
