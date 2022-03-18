@@ -1,6 +1,5 @@
 <template>
   <div class="video-container">
-    <!-- <template v-for="(loader, index) in loaders"> -->
       <div :class="`loader-parent loader-${index}`" :key="index" v-for="(loader, index) in loaders">
         <video 
           v-for="(player, pindex) in loader.players"
@@ -16,7 +15,6 @@
         >
         </video>
       </div>
-    <!-- </template> -->
   </div>
 </template>
 
@@ -25,7 +23,7 @@ export default {
   computed: {
     loaders() {
       return this.$store.state.videos.loaders;
-    }
+    },
   },
   mounted() {
     const firstPlayers = this.$el.querySelectorAll(".video-0-0, .video-1-0");
@@ -71,7 +69,7 @@ export default {
 
 <style lang="scss">
   .video-container {
-    /* display: none; */
+    display: none;
     video {
       width: 200px;
     }

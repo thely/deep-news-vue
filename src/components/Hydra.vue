@@ -28,7 +28,7 @@ export default {
     },
     ...mapState({ 
       freqVal: 'freqVal',
-    }),  
+    }),
   },
   watch: {
     loaders(newV, oldV) {
