@@ -1,12 +1,38 @@
+const fs = require('fs');
+const path = require('path');
+
 const express = require('express');
+const cors = require('cors');
 
 const app = express();
 const http = require('http').Server(app);
+app.use(cors());
+
 const io = require('socket.io')(http, {
   cors: {
     origin: 'http://localhost:8080',
     methods: ['GET', 'POST'],
   },
+});
+
+
+
+app.get('/videos', (req, res) => {
+  console.log("attempting to read video files");
+  fs.readdir(path.resolve(__dirname, "public/assets"), (err, files) => {
+    if (err) {
+      console.log(err);
+    }
+    else {  
+      files = files.filter((vid) => {
+        if (vid.includes(".mp4") || vid.includes(".m4v") || vid.includes(".mov")) {
+          return true;
+        }
+      });
+
+      res.json({ videos: files });
+    }
+  });
 });
 
 io.on('connection', async (socket) => {
@@ -52,6 +78,6 @@ io.on('connection', async (socket) => {
   });
 });
 
-http.listen(3000, () => {
-  console.log('listening on *:3000');
+http.listen(8081, () => {
+  console.log('listening on *:8081');
 });

@@ -8,7 +8,7 @@ import App from './App.vue'
 
 Vue.config.productionTip = false;
 
-const socket = io('http://localhost:3000', { cors: ['*'] });
+const socket = io('http://localhost:8081', { cors: ['*'] });
 Vue.use(VueSocketIOExt, socket, { store });
 
 new Vue({

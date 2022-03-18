@@ -9,7 +9,7 @@ const videos = {
       { players: [2, 2], nowPlaying: -1 }
     ],
     loadedOnce: [false, false],
-    files: ["vid1.mp4", "vid2.mp4", "vid3.1.mp4", "vid3.2.mp4", "vid3.3.mp4"]
+    files: []
   }),
 
   // Mutations
@@ -47,6 +47,9 @@ const videos = {
       }
 
       state.players[index].fileIndex = fileIndex;
+    },
+    loadFileList(state, files) {
+      state.files = files;
     }
   },
 
@@ -58,6 +61,15 @@ const videos = {
     getClasses: (state) => {
       const classes = state.players.map(({ className }) => { return className; });
       return classes;
+    }
+  },
+  actions: {
+    async getAllFiles ({ commit }) {
+      const urlReq = "http://localhost:8081/videos";
+      return fetch(urlReq).then(response => response.json()).then(data => {
+        const list = data.videos;
+        commit("loadFileList", list);
+      });
     }
   }
 }
