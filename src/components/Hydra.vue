@@ -12,6 +12,9 @@ import HydraHandle from "../utils/HydraPatch.js";
 let hydra;
 
 export default {
+  props: {
+    loaders: Array,
+  },
   data() {
     return {
       players: []
@@ -22,10 +25,10 @@ export default {
       const loaded = this.$store.state.videos.loadedOnce;
       return loaded;
     },
-    loaders() {
-      const players = JSON.parse(JSON.stringify(this.$store.state.videos.loaders));
-      return players;
-    },
+    // loaders() {
+    //   const players = JSON.parse(JSON.stringify(this.$store.state.videos.loaders));
+    //   return players;
+    // },
     ...mapState({ 
       freqVal: 'freqVal',
     }),

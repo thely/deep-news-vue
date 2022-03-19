@@ -3,8 +3,8 @@
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <ChatBox />
     <VideoLoader v-if="vidFilesExist" />
-    <Hydra v-if="vidFilesExist" />
-    <Xebra />
+    <Hydra v-if="vidFilesExist" :loaders="loaders" />
+    <Xebra :loaders="loaders"/>
     <Controls />
   </div>
 </template>
@@ -30,11 +30,15 @@ export default {
       vidFilesExist: false,
     }
   },
+  computed: {
+    loaders() {
+      const players = JSON.parse(JSON.stringify(this.$store.state.videos.loaders));
+      return players;
+    },
+  },
   mounted() {
     this.$store.dispatch("videos/getAllFiles").then(() => {
-      console.log("files are get");
       this.vidFilesExist = true;
-      // console.log(this.$store.getters['videos/getFilename'](0, 0));
     });
   },
   sockets: {
