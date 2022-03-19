@@ -31,23 +31,38 @@ const videos = {
 
     // Set upcoming player to next video, following the playingIndex value
     toNextFile(state, obj) {
+      // go one up from your sibling player's file
+      const sibling = Math.abs(obj.player - 1);
       const loader = state.loaders[obj.loader];
-      const fileIndex = (loader.players[obj.player] + 1) % state.files.length;
+      const fileIndex = (loader.players[sibling] + 1) % state.files.length;
 
       Vue.set(state.loaders[obj.loader].players, obj.player, fileIndex);
     },
 
     // Set to random file not currently in either player, ignore playingIndex
-    toRandomFile(state, index) {
-      const originals = [state.players.map(({ fileIndex }) => { return fileIndex })];
-      let fileIndex;
+    toRandomFile(state, obj) {
+      // condense down to just the files in use
+      let originals = state.loaders.map((loader, index) => {
+        return loader.players.map((player, pindex) => {
+          if (index != obj.loader || pindex != obj.player) {
+            return player;
+          } else {
+            return;
+          }
+        }).filter(Boolean);
+      });
 
+      originals = originals.flat();
+
+      // pick a random new index
+      let fileIndex = Math.floor(Math.random() * state.files.length);
       while (originals.includes(fileIndex)) {
         fileIndex = Math.floor(Math.random() * state.files.length);
       }
 
-      state.players[index].fileIndex = fileIndex;
+      Vue.set(state.loaders[obj.loader].players, obj.player, fileIndex);
     },
+
     loadFileList(state, files) {
       state.files = files;
     }

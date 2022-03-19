@@ -47,7 +47,7 @@ export default {
       
       // Preload setup
       var nextPlayer = Math.abs(currPlayer - 1);
-      this.$store.commit("videos/toNextFile", {
+      this.$store.commit("videos/toRandomFile", {
         loader: currLoader,
         player: nextPlayer
       });
