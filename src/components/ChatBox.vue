@@ -1,7 +1,7 @@
 <template>
   <div class="chat-block">
     <ChatNameChange />
-    <ChatMessageList />
+    <ChatMessageList :width="controls.freqVal * 40.0"/>
     <ChatMessageInput />
   </div>
 </template>
@@ -16,6 +16,9 @@ export default {
     ChatNameChange,
     ChatMessageInput,
     ChatMessageList
+  },
+  props: {
+    controls: Object,
   },
 }
 </script>

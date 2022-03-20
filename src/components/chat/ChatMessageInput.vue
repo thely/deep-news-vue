@@ -1,8 +1,8 @@
 <template>
   <div class="chat-writing">
     <form class="chat-form" action="" @submit.prevent="addMessage">
-      <input v-model="message" type="text" class="chat-input" placeholder="Write something..." />
-      <button type="submit" class="chat-submit">Enter</button>
+      <input v-model="message" type="text" class="chat-input" placeholder="What's on your mind?" />
+      <button type="submit" class="chat-submit">Share</button>
     </form>
   </div>
 </template>

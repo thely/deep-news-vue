@@ -6,13 +6,14 @@ const chat = {
     users: {},
     selfID: "",
     messages: [],
+    rules: { worm: "wood", butter: "cream" }
   }),
   mutations: {
     SOCKET_MESSAGE(state, msg) {
-      // console.log(msg); // also has time
       const username = state.users[msg.user].name;
       state.messages.push({
         text: msg.text,
+        original: msg.text,
         time: msg.time,
         name: username,
         id: msg.user
@@ -43,6 +44,10 @@ const chat = {
         const u = state.users[obj.id];
         u.name = obj.name;
         Vue.set(state.users, obj.id, u);
+    },
+    updateMessage(state, obj) {
+      console.log(obj);
+      Vue.set(state.messages, obj.index, obj.message);
     }
   },
   getters: {
@@ -53,8 +58,34 @@ const chat = {
         return "...";
       }
     },
+  },
+  actions: {
+    censorship: ({ state, commit }) => {
+      for (let i = 0; i < state.messages.length; i++) {
+        let m = state.messages[i].text;
+        m = alterToRule(m, state.rules);
+
+        if (m != state.messages[i].text) {
+          state.messages[i].text = m;
+
+          commit("updateMessage", {
+            index: i,
+            message: state.messages[i],
+          });
+        }
+      }
+    }
   }
 };
+
+function alterToRule(m, rules) {
+  for (let key of Object.keys(rules)) {
+    if (m.includes(key)) {
+      m = m.replace(new RegExp(key, 'g'), rules[key]);
+    }
+  }
+  return m;
+}
 
 
 const nameList = ["beluga", "transformer", "factorio", "gentleman"];
