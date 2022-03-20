@@ -31,30 +31,30 @@ function run2(h) {
     h.render(h.o0)
 }
 
-function run3(base) {
+function run3(obj) {
   const h = this;
-  base = base ? base : 1.5;
+  // base = base ? base : 1.5;
   // const post = base * 10;
   
   h.src(h.o0)
     .modulate(
-      h.osc(10,0,base).modulate(h.src(h.s0).sub(h.gradient()),base).brightness(-0.5)
-    ,0.003)
+      h.osc(10,0,obj.freqVal).modulate(h.src(h.s0).sub(h.gradient()),obj.freqVal).brightness(-0.5)
+    ,obj.modVal)
     .blend(h.src(h.s0).hue(({time}) => Math.sin(time*0.001)).posterize(20,4).contrast(1.5),0.01)
     .out(h.o0)
 
   h.render(h.o0);
 }
 
-function run4(base) {
+function run4(obj) {
   const h = this;
-  base = base ? base : 1.4;
+  // base = base ? base : 1.4;
   h.src(h.o0)
     .color(1,-0.2,-0.2)
     .modulate(h.o0, ({time}) => Math.sin(time*0.01)*0.01)
     .contrast(1.17)
     .saturate(1.03)
-    .blend(h.src(h.s0).color(1,base,1).luma(0.5,0.3), 0.25)
+    .blend(h.src(h.s0).color(1,obj.freqVal,1).luma(0.5,0.3), 0.25)
     .modulateHue(h.src(h.o0).modulate(h.noise(100),5),10)
     .out(h.o0);
 

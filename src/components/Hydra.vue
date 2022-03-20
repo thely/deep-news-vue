@@ -2,22 +2,22 @@
   <div class="hydra-container" :data-loaders="loaders">
     <canvas id="hydra-large" class="patch"></canvas>
     <canvas id="hydra-small" class="patch"></canvas>
-    <span :data-freq="freqVal"></span>
+    <span :data-freq="controls"></span>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import HydraHandle from "../utils/HydraPatch.js";
 let hydra;
 
 export default {
   props: {
     loaders: Array,
+    controls: Object,
   },
   data() {
     return {
-      players: []
+      players: [],
     }
   },
   computed: {
@@ -25,13 +25,6 @@ export default {
       const loaded = this.$store.state.videos.loadedOnce;
       return loaded;
     },
-    // loaders() {
-    //   const players = JSON.parse(JSON.stringify(this.$store.state.videos.loaders));
-    //   return players;
-    // },
-    ...mapState({ 
-      freqVal: 'freqVal',
-    }),
   },
   watch: {
     loaders(newV, oldV) {
@@ -43,17 +36,17 @@ export default {
         }
       }
     },
-    freqVal(newV) {
-      hydra.runAll(parseInt(newV));
-    },
     videosLoaded(newV) {
       for (let i = 0; i < newV.length; i++) {
         if (newV[i] == true) {
           this.switchHydraVideo({ loader: i, player: 0 });
-          hydra.runOne(i);
+          hydra.runOne(i, this.controls);
         }
       }
-    }
+    },
+    controls(newV) {
+      hydra.runAll(newV);
+    },
   },
   mounted() {
     hydra = new HydraHandle();

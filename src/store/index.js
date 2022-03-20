@@ -13,11 +13,16 @@ export default new Vuex.Store({
   },
   state: () => ({ 
     freqVal: 1.5,
+    modVal: 0.0015
   }),
   mutations: {
     updateFreq(state, val) {
       state.freqVal = val;
-      console.log(state.freqVal);
+      // console.log(state.freqVal);
+    },
+    updateMod(state, val) {
+      state.modVal = val;
+      // console.log(state.freqVal);
     }
   },
   getters: {

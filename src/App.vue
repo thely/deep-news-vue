@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <ChatBox />
+    <ChatBox :controls="controls" />
     <VideoLoader v-if="vidFilesExist" />
-    <Hydra v-if="vidFilesExist" :loaders="loaders" />
-    <Xebra :loaders="loaders"/>
+    <Hydra v-if="vidFilesExist" :loaders="loaders" :controls="controls" />
+    <Xebra :loaders="loaders" :controls="controls" />
     <Controls />
   </div>
 </template>
@@ -34,6 +34,13 @@ export default {
     loaders() {
       const players = JSON.parse(JSON.stringify(this.$store.state.videos.loaders));
       return players;
+    },
+    controls() {
+      const controls = {
+        freqVal: parseFloat(this.$store.state.freqVal),
+        modVal: parseFloat(this.$store.state.modVal)
+      }
+      return controls;
     },
   },
   mounted() {

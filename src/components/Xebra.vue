@@ -9,12 +9,13 @@ let maxConn;
 export default {
   props: {
     loaders: Array,
+    controls: Object,
   },
-  computed: {
-    freqVal() {
-      return this.$store.state.freqVal;
-    },
-  },
+  // computed: {
+  //   freqVal() {
+  //     return this.$store.state.freqVal;
+  //   },
+  // },
   mounted() {
     const options = {
       hostname : "127.0.0.1", // localhost
@@ -41,8 +42,8 @@ export default {
 
       this.sendToMax("videos", retval);
     },
-    freqVal(newV) {
-      this.sendToMax("freqVal", newV);
+    controls(newV) {
+      this.sendToMax("controls", newV);
     }
   },
   methods: {
