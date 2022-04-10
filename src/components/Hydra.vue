@@ -45,7 +45,7 @@ export default {
       }
     },
     controls(newV) {
-      hydra.runAll(newV);
+      hydra.changePatches(newV);
     },
   },
   mounted() {
