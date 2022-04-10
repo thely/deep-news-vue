@@ -16,7 +16,6 @@ const io = require('socket.io')(http, {
 });
 
 
-
 app.get('/videos', (req, res) => {
   console.log("attempting to read video files");
   fs.readdir(path.resolve(__dirname, "public/assets"), (err, files) => {
@@ -35,6 +34,8 @@ app.get('/videos', (req, res) => {
   });
 });
 
+
+let msgID = 0;
 io.on('connection', async (socket) => {
   console.log(`Client connected [id=${socket.id}]`);
   let sockets;
@@ -68,9 +69,20 @@ io.on('connection', async (socket) => {
   // Type message + send it
   socket.on('message', (data) => {
     console.log('message: ', JSON.stringify(data));
-    io.emit('message', { user: socket.id, text: data.msg, time: new Date().toISOString() });
+    io.emit('message', { 
+      user: socket.id,
+      msgID: msgID, 
+      text: data.msg, 
+      time: new Date().toISOString() 
+    });
+
+    msgID++;
   });
 
+  socket.on('updateMessage', (data) => {
+    console.log('updated message: ', JSON.stringify(data));
+    io.emit('updateMessage', data);
+  });
 
   socket.on('disconnect', () => {
     console.log(`Client disconnected [id=${socket.id}]`);
