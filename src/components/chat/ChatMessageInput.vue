@@ -29,7 +29,9 @@ export default {
 </script>
 
 <style lang="scss">
-
+.chat-writing {
+  padding: 1em;
+}
 .chat-form {
   display: grid;
   grid-template-columns: 3fr 1fr;

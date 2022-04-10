@@ -45,6 +45,8 @@ export default {
 
 <style lang="scss">
 .chat-name {
+  padding: 1em;
+  
   h4 {
     font-weight: normal;
     margin: 0;

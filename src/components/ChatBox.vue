@@ -20,13 +20,16 @@ export default {
   props: {
     controls: Object,
   },
+  mounted() {
+    console.log(this.controls);
+  }
 }
 </script>
 
 <style lang="scss">
 .chat-block {
   margin: 1em;
-  width: 30vw;
+  width: 34vw;
   height: calc(100vh - 2em);
   max-height: 100vh;
 
@@ -35,10 +38,10 @@ export default {
   border: 3px solid white;
   color: white;
   font-size: 1.3em;
-  padding: 1em;
+  // padding: 1em;
 
   display: grid;
-  grid-template-rows: 2em 1fr 2em;
+  grid-template-rows: 3em 1fr 4em;
 }
 
 </style>
