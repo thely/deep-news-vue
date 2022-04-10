@@ -16,8 +16,18 @@ const chat = {
         original: msg.text,
         time: msg.time,
         name: username,
-        id: msg.user
+        msgID: msg.msgID,
+        id: msg.user,
+        reactions: [],
       });
+    },
+
+    SOCKET_UPDATEMESSAGE(state, msg) {
+      // state.messages[msgID]
+      let mIndex = state.messages.findIndex(m => m.msgID == msg.msgID);
+      console.log("now it's: ");
+      console.log(JSON.stringify(msg));
+      Vue.set(state.messages, mIndex, msg);
     },
 
     SOCKET_ADDUSER(state, obj) {
