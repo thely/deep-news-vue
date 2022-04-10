@@ -1,7 +1,5 @@
 <template>
   <div class="controls">
-    <!-- <button class="hydra-reset">Set patch again</button> -->
-    <!-- <button class="max-ping">Send a blip to Max</button> -->
     <input type="range" min="0" max="5" step="0.1" v-model="freqValue" @input="freqMethod">
     <label for="volume">Frequency</label>
 
@@ -9,11 +7,17 @@
     <label for="volume">Modulation</label>
 
     <button @click.prevent="censor">Censor something</button>
+    <!-- <BlobControl @percent="blobPercent" /> -->
   </div>
 </template>
 
 <script>
+// import BlobControl from "./controls/BlobControl.vue";
+
 export default {
+  components: {
+    // BlobControl,
+  },
   data() {
     return {
       freqValue: 1.5,
@@ -29,6 +33,11 @@ export default {
     },
     censor() {
       this.$store.dispatch("chat/censorship");
+      this.$emit("pressCensor", true);
+    },
+    blobPercent(e) {
+      this.$store.commit("updateFreq", e / 20.0);
+      // console.log(e);
     }
   }
 }
