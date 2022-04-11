@@ -1,69 +1,105 @@
-// function runMixer(h) {
-// s0.initVideo('https://rr4---sn-5ualdnlr.googlevideo.com/videoplayback?expire=1649014329&ei=2aFJYtOvK5DP8wT__oKwDQ&ip=2601%3A5c2%3A100%3A3f30%3A6d31%3A60e4%3Affa3%3Ac71c&id=o-AC3QtO0OklMrw6vNMVgetnwPp3k4j3wSPglUpb4Hh6Lp&itag=22&source=youtube&requiressl=yes&mh=Me&mm=31%2C26&mn=sn-5ualdnlr%2Csn-p5qlsndk&ms=au%2Conr&mv=m&mvi=4&pl=50&initcwndbps=1636250&spc=4ocVC1lvPxQkC0YzL7XluwUvCCTG&vprv=1&mime=video%2Fmp4&ns=e61KbWgfwpv6qCue3E-MjQEG&cnr=14&ratebypass=yes&dur=1709.476&lmt=1648780718421022&mt=1648992295&fvip=3&fexp=24001373%2C24007246&c=WEB&txp=5432434&n=ecQIiggNH6NgVm3qO&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cspc%2Cvprv%2Cmime%2Cns%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRgIhAMam4cTKhZ9-PJ9eOF6oVzpoi4sRxRN6s8Vz7COzSTKiAiEA1kt3FWHxsWm6A_PGupeBVFwg_xIkUB9-vyKQQXncl78%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRgIhAMTiawx4XbRtXVTkmC10bn2Q8xGfbraozRgx58hg7TkWAiEAzS91rbozxNg4xCOhu4JSmh8qGvLvKGFfT7mkp5bq_MM%3D')
-
-// render()
-
-// render(h.o0) //Channel 1
-
-// render(h.o1) //Channel 2
-
-// render(h.o2) //Channel 3
-
-// render(h.o3) //Channel 4
-
-//src(h.o0).modulate(h.o3).out(h.o3)
+/* eslint-disable no-unused-vars */
 
 //Patch1
-function patch1(h) {
+function patch1(h, data) {
+  let v1;
+
+  if (data != null) {
+    v1 = data.freqVal / 650.0;
+  } else {
+    v1 = 0.1;
+  }
+  
   h.src(h.s0)
-    .modulatePixelate(h.voronoi(100,0.3,1000).pixelate(20,20),({time}) => 400+(250*(Math.sin(time*0.1))),8) //voronoi(100,0.3,1000).pixelate(20,20), voronoi(100,0.3,1).pixelate(20,2), voronoi(100,0.3,1).pixelate(2,20)
+    .modulatePixelate(h.voronoi(100,0.3,1000).pixelate(20,20),({time}) => 400+(250*(Math.sin(time*0.1))),8)
     .diff(h.src(h.s0).modulateHue(h.src(h.o0).colorama(0.1)).scale(1.01),20)
-    .luma(0.1,0.1)
-    .colorama(({time}) => 0.085+(0.075*(Math.sin(time*0.5)))) //0.1, 0.01-0.15
-    .mult(h.src(h.s0).modulateHue(h.osc(1,1,0.5).scale(1.01),1),0.1)
+    .luma(v1,v1)
+    .colorama(({time}) => v1 +(0.075*(Math.sin(time*0.5)))) //0.1, 0.01-0.15
+    .mult(h.src(h.s0).modulateHue(h.osc(1,1,0.5).scale(1.01),1),v1)
     .out(h.o0)
   h.render(h.o0)
 }
 
-function patch2(h) {
-  //Patch2
+function patch2(h, data) {
+  let v1, v2;
+
+  if (data != null) {
+    v1 = data.freqVal / 5000.0;
+    v2 = data.modVal / 2000.0;
+  } else {
+    v1 = 0.0015;
+    v2 = 0.04;
+  }
+
   h.src(h.o1)
-    .modulate(h.osc(10,0,1.5).modulate(h.src(h.s0).sub(h.gradient()),1.5).brightness(-0.5),0.0015) //modulate amnt: 0.003, 0.001, 0.0015,0.002
-    .blend(h.src(h.s0).hue(({time}) => Math.sin(time*0.001)).posterize(20,4).contrast(1.5),0.04) //blend amt: 0.01,0.04,0.001
+    .modulate(h.osc(10,0,1.5).modulate(h.src(h.s0).sub(h.gradient()),1.5).brightness(-0.5), v1) //modulate amnt: 0.003, 0.001, 0.0015,0.002, started at 0.0015
+    .blend(h.src(h.s0).hue(({time}) => Math.sin(time*0.001)).posterize(20,4).contrast(1.5), v2) //blend amt: 0.01,0.04,0.001, starts at 0.04
     .out(h.o1)
   h.render(h.o1)
 }
 
-function patch3(h) {
+function patch3(h, data) {
+  let v1, v2;
+
+  if (data != null) {
+    v1 = data.freqVal <= 33 ? 1 : data.freqVal <= 66 ? 0.5 : 0.01;
+    v2 = data.modVal <= 33 ? 100 : data.modVal <= 66 ? 500 : 1000;
+  } else {
+    v1 = 0.5;
+    v2 = 100;
+  }
+
   //Patch3
   h.src(h.o2)
     .color(1,-0.2,-0.2)
     .modulate(h.src(h.o2).rotate(({time}) => (time*0.1)%360), ({time}) => Math.sin(time*0.01)*0.01)
     .contrast(1.17)
     .saturate(1.03)
-    .blend(h.src(h.s0).color(1,1.4,1).luma(0.5,0.3), 0.25) //threshold: .luma(threshold, 0.3) discreet values: [1,0.5,0.01]
-    .modulateHue(h.src(h.o2).modulate(h.noise(100),5),10) // granurality: .modulateHue(h.src(h.o0).modulate(h.noise(100),5),granularity) discret values: [10,100,1000]
+    .blend(h.src(h.s0).color(1,1.4,1).luma(0.5,0.3), v1) //threshold: discrete values: [1,0.5,0.01], was once 0.25
+    .modulateHue(h.src(h.o2).modulate(h.noise(100),5),v2) // granurality: discret values: [10,100,1000]
     .out(h.o2);
   h.render(h.o2)
 }
 
-function patch4(h) {
+function patch4(h, data) {
+  let v1, v2;
+
+  if (data != null) {
+    v1 = data.freqVal;
+    v2 = data.modVal / 500.0;
+    // v1 = data.freqVal <= 33 ? 1 : data.freqVal <= 66 ? 0.5 : 0.01;
+    // v2 = data.modVal <= 33 ? 100 : data.modVal <= 66 ? 500 : 1000;
+  } else {
+    v1 = 0.5;
+    v2 = 100;
+  }
+
   //Patch4
   h.src(h.s0)
-    .hue(({time}) => Math.sin(time*1)) // hue speed: Math.sin(time*speed), discret values :[1, 100]
-    .posterize(20,4)
-    .modulate(h.o3,({time}) => 500+(0.5*Math.sin(time*0.1))) //speed: Math.sin(time*speed), discret values: [0.1, 1 ,50]
+    .hue(({time}) => Math.sin(time * v1)) // hue speed: Math.sin(time*speed), discret values :[1, 100]
+    .posterize(20,4) // originally 20
+    .modulate(h.o3,({time}) => 500+(0.5*Math.sin(time * v2))) //speed: Math.sin(time*speed), discret values: [0.1, 1 ,50]
     .out(h.o3)
   h.render(h.o3)
 }
 
-function patch5(h) {
+function patch5(h, data) {
+  let v1, v2;
+
+  if (data != null) {
+    v1 = data.freqVal / 500.0;
+    v2 = data.modVal / 100.0;
+  } else {
+    v1 = 0.1;
+    v2 = 0.25;
+  }
+
   //Patch5
   h.src(h.s0)
-    .modulate(h.voronoi(({time}) => 100+(100*Math.sin(time*0.1)).mult(h.osc(10,0.1,0.5)), 1, 1))
-    .mult(h.o0, 0.1)
+    .modulate(h.voronoi(({time}) => 100+(100*Math.sin(time*0.1)).mult(h.osc(10,v1,0.5)), 1, 1))
+    .mult(h.o0, 0.1) // orig 0.1
     .scale(0.5)
-    .color(({time}) => 1*(Math.sin(time*0.21)), ({time}) => 0.25*(Math.sin(time*0.2)),1)
+    .color(({time}) => 1*(Math.sin(time*0.21)), ({time}) => v2 * (Math.sin(time*0.2)),1) // it was originally 0.25
     .color(1, 1.1,1)
     .contrast(1.5)
     .modulate(h.o0, 0.5)
@@ -249,21 +285,21 @@ function patch5p3(h) {
 }
 
 const patchList = [
-  patch1,
-  patch2,
-  patch3,
-  patch4,
+  // patch1,
+  // patch2,
+  // patch3,
+  // patch4,
   patch5,
   patch1p3,
-  patch2p1,
-  patch2p4,
-  patch3p1,
-  patch3p4,
-  patch4p1,
-  patch4p2,
-  patch4p3,
-  patch5p1,
-  patch5p3
+  // patch2p1,
+  // patch2p4,
+  // patch3p1,
+  // patch3p4,
+  // patch4p1,
+  // patch4p2,
+  // patch4p3,
+  // patch5p1,
+  // patch5p3
 ];
 
 export default patchList;

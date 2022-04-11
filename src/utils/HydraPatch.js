@@ -4,8 +4,8 @@ const Hydra = require("hydra-synth");
 
 class HydraHandle {
   constructor() {
-    const h = this.initPatch("#hydra-large", 800, 400, this.randomPatch());
-    const h2 = this.initPatch("#hydra-small", 400, 300, this.randomPatch());
+    const h = this.initPatch("#hydra-large", 800, 450, this.randomPatch());
+    const h2 = this.initPatch("#hydra-small", 400, 225, this.randomPatch());
 
     this.patches = [h, h2];
   }
@@ -27,31 +27,27 @@ class HydraHandle {
 
   runAll(data) {
     for (let i = 0; i < this.patches.length; i++) {
-      // this.patches[i].patch(this.patches[i]);  
-      this.runOne(i);
+      this.runOne(i, data);
     }
   }
 
-  runOne(index) {
-    this.patches[index].patch(this.patches[index]);
+  runOne(index, data) {
+    this.patches[index].patch(this.patches[index], data);
   }
 
   videoNotify(player, patch) {
-    // console.log("notify hydra: video " + player + " to patch " + patch);
     this.patches[patch].s0.init({ src: player, dynamic: true });
   }
 
-  changePatches() {
+  changePatches(data) {
     this.patches[0].patch = this.randomPatch();
     this.patches[1].patch = this.randomPatch();
 
-    this.runAll();
+    this.runAll(data);
   }
 
   randomPatch() {
-    console.log(patchList);
     const p = patchList[Math.floor(Math.random() * patchList.length)];
-    console.log(p);
     return p;
   }
 }
