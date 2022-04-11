@@ -12,8 +12,9 @@ export default new Vuex.Store({
     chat,
   },
   state: () => ({ 
-    freqVal: 1.5,
-    modVal: 0.0015
+    freqVal: 20,
+    modVal: 20,
+    // mouseDown: false,
   }),
   mutations: {
     updateFreq(state, val) {
@@ -23,7 +24,12 @@ export default new Vuex.Store({
     updateMod(state, val) {
       state.modVal = val;
       // console.log(state.freqVal);
-    }
+    },
+    // triggerMouse(state, val) {
+    //   val = val == null ? !state.mouseDown : val;
+    //   state.mouseDown = val;
+    //   // console.log(state.mouseDown);
+    // }
   },
   getters: {
    
