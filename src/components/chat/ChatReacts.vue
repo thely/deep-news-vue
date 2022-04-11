@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import emojis from "@/utils/emoji-list.json";
+
 export default {
   props: {
     messageID: Number,
@@ -22,25 +24,26 @@ export default {
   data() {
     return {
       showArray: false,
-      reacts: [
-        {
-          emoji: "👍",
-          clicked: false
-        },
-        {
-          emoji: "👎",
-          clicked: false
-        },
-        {
-          emoji: "👌",
-          clicked: false
-        },
-        {
-          emoji: "🙏",
-          clicked: false
-        },
-      ]
+      reacts: [],
     }
+  },
+  mounted() {
+    let tester = [];
+    const allCats = Object.keys(emojis);
+
+    for (let i = 0; i < 4; i++) {
+      const c = allCats[Math.floor(Math.random() * allCats.length)];
+      const index = Math.floor(Math.random() * emojis[c].length);
+      const emoji = emojis[c][index];
+      tester.push({
+        emoji: emoji.emoji,
+        category: c,
+        index: index,
+        clicked: false,
+      });
+    }
+
+    this.reacts = tester;
   },
   methods: {
     emojiClick(_e, index) {

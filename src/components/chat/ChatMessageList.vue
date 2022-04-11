@@ -9,12 +9,6 @@
           <span class="msg-name-mini">{{ msg.name }}</span>
           <div class="msg-text">
             <span class="msg-text-inner">{{ msg.text }}</span>
-
-            <!-- <div v-if="'reactions' in msg && visibleReactions(msg)" class="msg-reactions">
-              <template v-for="(react, rindex) in msg.reactions" >
-                <span v-if="react.clicked" :key="rindex">{{ react.emoji }}</span>
-              </template>
-            </div> -->
             <ChatReactionResults :reactions="msg.reactions" :effectiveLength="visibleReactions(msg)" />
           </div>
           
@@ -88,15 +82,14 @@ export default {
     widthCalc(newV, oldV) {
       let w;
       if (Math.random() > 0.5) {
-        w = Math.max(100, newV);
+        w = Math.max(100.0, 100 + (newV / 2.0));
       } else {
-        w = oldV;
+        w = Math.max(100, oldV);
       }
 
       this.actualWidth = w;
-      this.skew = w / 100.0;
-
-      console.log(this.actualWidth);
+      // this.skew = w / 100.0;
+      this.skew = 0;
     },
     visibleReactions(m) {
       let len = 0;

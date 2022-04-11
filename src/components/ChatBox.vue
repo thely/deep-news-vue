@@ -1,7 +1,7 @@
 <template>
   <div class="chat-block">
     <ChatNameChange />
-    <ChatMessageList :width="controls.freqVal * 40.0"/>
+    <ChatMessageList :width="controls.freqVal"/>
     <ChatMessageInput />
   </div>
 </template>
