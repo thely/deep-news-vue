@@ -9,11 +9,11 @@
           <span class="msg-name-mini">{{ msg.name }}</span>
           <div class="msg-text">
             <span class="msg-text-inner">{{ msg.text }}</span>
-            <ChatReactionResults :reactions="msg.reactions" :effectiveLength="visibleReactions(msg)" />
+            <ChatReactionResults :reactions="msg.reactions" :effectiveLength="visibleReactions(msg)" :user="selfID" />
           </div>
           
         </div>
-        <ChatReacts @reactClicked="addReactions" :messageID="index"/>
+        <ChatReacts :messageID="index" :user="selfID" />
       </li>
     </ul>
   </div>
@@ -42,7 +42,9 @@ export default {
       return this.$store.state.chat.messages;
     },
     selfID() {
-      return this.$store.state.chat.selfID;
+      const u = this.$store.state.chat.selfID;
+      console.log(u);
+      return u;
     },
 
   },
@@ -62,23 +64,29 @@ export default {
     this.widthCalc(100, 100);
   },
   methods: {
-    addReactions(e, data, index) {
-      let m = this.messages[index];
-      let contains = false;
-      m.reactions = m.reactions.map((react) => {
-        if (react.emoji == data.emoji) {
-          console.log(data);
-          contains = true;
-          return data;
-        }
-        return react;
-      });
+    // addReactions(e, data, index) {
+    //   let m = this.messages[index];
+    //   let contains = false;
+    //   m.reactions = m.reactions.map((react) => {
+    //     if (react.emoji == data.emoji) {
+    //       if (!data.clicked) {
+    //         react.by = react.by.filter((r) => { return r != this.selfID });
+    //         return react;
+    //       } else {
+    //         data.by = [...new Set(data.by.concat(react.by))];
+    //         contains = true;
+    //         return data;
+    //       }
+    //     }
 
-      if (!contains) {
-        m.reactions.push(data);
-      }
-      this.$socket.client.emit("updateMessage", m);
-    },
+    //     return react;
+    //   });
+
+    //   if (!contains) {
+    //     m.reactions.push(data);
+    //   }
+      // this.$socket.client.emit("updateMessage", m);
+    // },
     widthCalc(newV, oldV) {
       let w;
       if (Math.random() > 0.5) {
@@ -94,8 +102,8 @@ export default {
     visibleReactions(m) {
       let len = 0;
       for (let react of m.reactions) {
-        if (react.clicked) {
-          len++;
+        if (react.by.length > 0) {
+          len += react.by.length;
         }
       }
 

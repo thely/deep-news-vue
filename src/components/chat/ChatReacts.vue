@@ -3,7 +3,11 @@
     <div v-if="showArray" class="react-array">
       <ul>
         <li class="emoji-single" v-for="(em, index) in reacts" :key="index">
-          <span @click="emojiClick($event, index)" :class="em.clicked ? 'clicked' : ''">{{ em.emoji }}</span>
+          <span 
+              @click="emojiClick($event, index)" 
+              :class="em.clicked && em.by.includes(user) ? 'clicked' : ''">
+                {{ em.emoji }}
+          </span>
         </li>
       </ul>
     </div>
@@ -20,6 +24,7 @@ import emojis from "@/utils/emoji-list.json";
 export default {
   props: {
     messageID: Number,
+    user: String,
   },
   data() {
     return {
@@ -28,6 +33,8 @@ export default {
     }
   },
   mounted() {
+    console.log("the user id?");
+    console.log(this.user);
     let tester = [];
     const allCats = Object.keys(emojis);
 
@@ -40,7 +47,10 @@ export default {
         category: c,
         index: index,
         clicked: false,
+        by: [],
       });
+
+      console.log(tester);
     }
 
     this.reacts = tester;
@@ -48,7 +58,14 @@ export default {
   methods: {
     emojiClick(_e, index) {
       this.reacts[index].clicked = !this.reacts[index].clicked;
-      this.$emit("reactClicked", _e, this.reacts[index], this.messageID);
+      // this.$emit("reactClicked", _e, this.reacts[index], this.messageID);
+
+      this.$store.commit("chat/updateMsgReaction", {
+        msgID: this.messageID,
+        user: this.user,
+        react: this.reacts[index], // current emoji only
+        enabled: this.reacts[index].clicked
+      });
     },
     hideDisplay() {
       this.showArray = false;

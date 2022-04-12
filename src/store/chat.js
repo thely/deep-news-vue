@@ -23,10 +23,7 @@ const chat = {
     },
 
     SOCKET_UPDATEMESSAGE(state, msg) {
-      // state.messages[msgID]
       let mIndex = state.messages.findIndex(m => m.msgID == msg.msgID);
-      console.log("now it's: ");
-      console.log(JSON.stringify(msg));
       Vue.set(state.messages, mIndex, msg);
     },
 
@@ -55,10 +52,52 @@ const chat = {
         u.name = obj.name;
         Vue.set(state.users, obj.id, u);
     },
+
+    // OLD -- ignore most of the time
     updateMessage(state, obj) {
-      console.log(obj);
+      // console.log("receiving the updatemessage thingy?");
       Vue.set(state.messages, obj.index, obj.message);
-    }
+    },
+
+    updateMsgReaction(state, {msgID, react, user, enabled}) {
+      let m = state.messages[msgID];
+      console.log(m.reactions);
+      let oldIndex = m.reactions.findIndex((r) => r.emoji == react.emoji);
+
+      if (oldIndex == -1 && enabled) {
+        console.log("new around here");
+        react.by = [user];
+        m.reactions.push(react);
+        // Vue.set(state.messages, msgID, m);
+        // Vue.prototype.$socket.client.emit("updateMessage", m);
+        // return;
+      } else {
+        let oldReact = m.reactions[oldIndex];
+      
+        if (enabled) {
+          if (!oldReact.by.includes(user)) {
+            oldReact.by.push(user);
+          } else {
+            console.log("we should have added the user, but they were already there?");
+          }
+        } else {
+          if (oldReact.by.includes(user)) {
+            react.by = react.by.filter((u) => { return u !== user });
+          } else {
+            console.log("we should have removed someone, but they weren't there");
+          }
+        }
+
+        m.reactions[oldIndex] = oldReact;
+      }
+
+      Vue.set(state.messages, msgID, m);
+      Vue.prototype.$socket.client.emit("updateMessage", m);
+      Vue.prototype.$socket.client.emit("updateMarket", {
+        data: react,
+        state: enabled,
+      });
+    },
   },
   getters: {
     getOwnUsername: (state) => {

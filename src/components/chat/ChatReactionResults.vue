@@ -1,7 +1,7 @@
 <template>
   <div v-if="effectiveLength > 0" class="msg-reactions">
     <template v-for="(react, rindex) in reactions" >
-        <span v-if="react.clicked" :key="rindex">{{ react.emoji }}</span>
+        <span v-if="react.by.length > 0" :key="rindex">{{ react.emoji.repeat(react.by.length) }}</span>
     </template>
     <span class="react-length">{{ effectiveLength }}</span>
   </div>
