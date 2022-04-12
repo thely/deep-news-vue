@@ -64,29 +64,6 @@ export default {
     this.widthCalc(100, 100);
   },
   methods: {
-    // addReactions(e, data, index) {
-    //   let m = this.messages[index];
-    //   let contains = false;
-    //   m.reactions = m.reactions.map((react) => {
-    //     if (react.emoji == data.emoji) {
-    //       if (!data.clicked) {
-    //         react.by = react.by.filter((r) => { return r != this.selfID });
-    //         return react;
-    //       } else {
-    //         data.by = [...new Set(data.by.concat(react.by))];
-    //         contains = true;
-    //         return data;
-    //       }
-    //     }
-
-    //     return react;
-    //   });
-
-    //   if (!contains) {
-    //     m.reactions.push(data);
-    //   }
-      // this.$socket.client.emit("updateMessage", m);
-    // },
     widthCalc(newV, oldV) {
       let w;
       if (Math.random() > 0.5) {
