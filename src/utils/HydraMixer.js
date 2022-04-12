@@ -96,7 +96,8 @@ function patch5(h, data) {
 
   //Patch5
   h.src(h.s0)
-    .modulate(h.voronoi(({time}) => 100+(100*Math.sin(time*0.1)).mult(h.osc(10,v1,0.5)), 1, 1))
+    .modulate(h.voronoi(({time}) => 100 + (100 * Math.sin(time * 0.1)), 1, 1))
+    .mult(h.osc(10,v1,0.5))
     .mult(h.o0, 0.1) // orig 0.1
     .scale(0.5)
     .color(({time}) => 1*(Math.sin(time*0.21)), ({time}) => v2 * (Math.sin(time*0.2)),1) // it was originally 0.25
