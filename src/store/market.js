@@ -3,7 +3,9 @@
 const market = {
   namespaced: true,
   state: () => ({
-    funds: 0,
+    funds: 100,
+    stockWords: [],
+    portfolio: {}
   }),
   mutations: {
     updateTotal(state, data) {

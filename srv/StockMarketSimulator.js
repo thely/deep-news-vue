@@ -34,7 +34,6 @@ class StockMarket {
     };
 
     this.stocks = {};
-    // this.stockBaseData();
   }
 
   emojiTotals(data, state) {
@@ -64,18 +63,11 @@ class StockMarket {
       let newVol = volatility * Math.random() * 1.1;
       let diff = 2 * newVol * difference;
       let newPrice = sellPrice + (sellPrice * diff);
-      // console.log("diff: " + diff);
-      // console.log(typeof newVol);
-      // console.log(typeof oldPrice);
-      // console.log(newPrice);
-      // console.log(sellPrice);
+
       priceList.push(newPrice);
 
       highest = newPrice > highest ? newPrice : highest;
       lowest = newPrice < lowest ? newPrice : lowest;
-      
-      // console.log(highest);
-      // console.log(lowest);
     }
 
     let averagePrice = priceList.reduce((a, b) => a + b, 0 ) / priceList.length;
@@ -101,26 +93,41 @@ class StockMarket {
       }
 
       this.stocks[key].points = points;
+      console.log(points);
     }
-
     return this.stocks;
   }
 
-  // stockGenData() {
-  //   for (let key of Object.keys(this.emojis)) {
-  //     let totalShares = 1000;
-  //     let availableShares = totalShares;
-  //     let startingPrice = 10.0;
-  //     let volatility = Math.random() * 0.2;
+  addNextDay() {
+    for (let key of Object.keys(this.stocks)) {
+      // console.log(this.stocks[key]);
+      let price = this.stocks[key].points[this.stocks[key].points.length - 1];
+      // console.log("price: ");
+      // console.log(price);
+      let priceObj = this.stockFlux(price.close, Math.random() * 0.2);
+      // console.log("priceObj: ");
+      // console.log(priceObj);
 
-  //     let days = 50;
+      this.stocks[key].points.shift();
+      this.stocks[key].points.push(priceObj);
+    }
 
-  //     for (let i = 0; i < days; i++) {
+    // console.log(this.stocks["smileys"].points);
+  }
 
-  //     }
+  stockDayLoop(socketCallback) {
+    let intCount = 0;
+    const interval = setInterval(() => {
+      this.addNextDay();
+      
+      socketCallback(this.stocks);
+      intCount++;
 
-  //   }
-  // }
+      if (intCount > 1000) {
+        clearInterval(interval);
+      }
+    }, 2000);
+  }
 }
 
 export default StockMarket;

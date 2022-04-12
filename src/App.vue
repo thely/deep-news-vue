@@ -1,20 +1,24 @@
 <template>
   <div id="app">
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <ChatBox :controls="controls" />
     <VideoLoader v-if="vidFilesExist" />
-    <Hydra v-if="vidFilesExist" :loaders="loaders" :controls="controls" />
+    <!-- <Hydra v-if="vidFilesExist" :loaders="loaders" :controls="controls" /> -->
     <Xebra :loaders="loaders" :controls="controls" />
-    <Controls />
+    <!-- <Controls /> -->
+    <StockChart />
   </div>
 </template>
 
 <script>
+/* eslint-disable vue/no-unused-components */
 import Hydra from './components/Hydra.vue';
 import VideoLoader from './components/VideoLoader.vue';
 import ChatBox from './components/ChatBox.vue';
 import Controls from './components/Controls.vue';
 import Xebra from './components/Xebra.vue';
+import StockChart from './components/StockChart.vue';
+
+// https://en.wikipedia.org/wiki/Special:RandomInCategory/Category:Member_states_of_the_United_Nations
 
 export default {
   name: 'App',
@@ -23,7 +27,8 @@ export default {
     VideoLoader,
     ChatBox,
     Controls,
-    Xebra
+    Xebra,
+    StockChart
   },
   data() {
     return {

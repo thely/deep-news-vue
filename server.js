@@ -1,7 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-import StockMarket from "./srv/StockMarket.js";
+import StockMarket from "./srv/StockMarketSimulator.js";
 
 const fs = require('fs');
 const path = require('path');
@@ -44,6 +44,11 @@ app.get('/videos', (req, res) => {
 let msgID = 0;
 let market = new StockMarket();
 
+market.stockBaseData();
+market.stockDayLoop((data) => {
+  io.emit("stockUpdateData", data);
+});
+
 io.on('connection', async (socket) => {
   console.log(`Client connected [id=${socket.id}]`);
   let sockets;
@@ -57,7 +62,7 @@ io.on('connection', async (socket) => {
 
     // tell yourself you exist
     socket.emit('addUser', { id: socket.id, isSelf: true, others: sockets });
-    socket.emit('stockBaseData', market.stockBaseData());
+    socket.emit('stockBaseData', market.stocks);
   } catch (e) {
     console.log(e);
   }
@@ -75,9 +80,11 @@ io.on('connection', async (socket) => {
   });
 
 
-  // Type message + send it
+  // new message entered
   socket.on('message', (data) => {
     console.log('message: ', JSON.stringify(data));
+    market.analyseForStocks(data.msg);
+
     io.emit('message', { 
       user: socket.id,
       msgID: msgID, 
