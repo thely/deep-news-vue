@@ -2,6 +2,7 @@
   "name": "far-away",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -9,6 +10,7 @@
     "server": "nodemon server.js"
   },
   "dependencies": {
+    "chart.js": "^3.7.1",
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
     "express": "^4.17.3",

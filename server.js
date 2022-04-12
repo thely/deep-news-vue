@@ -1,3 +1,8 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+import StockMarket from "./srv/StockMarket.js";
+
 const fs = require('fs');
 const path = require('path');
 
@@ -18,6 +23,7 @@ const io = require('socket.io')(http, {
 
 app.get('/videos', (req, res) => {
   console.log("attempting to read video files");
+  const __dirname = path.resolve();
   fs.readdir(path.resolve(__dirname, "public/assets"), (err, files) => {
     if (err) {
       console.log(err);
@@ -36,6 +42,8 @@ app.get('/videos', (req, res) => {
 
 
 let msgID = 0;
+let market = new StockMarket();
+
 io.on('connection', async (socket) => {
   console.log(`Client connected [id=${socket.id}]`);
   let sockets;
@@ -49,6 +57,7 @@ io.on('connection', async (socket) => {
 
     // tell yourself you exist
     socket.emit('addUser', { id: socket.id, isSelf: true, others: sockets });
+    socket.emit('stockBaseData', market.stockBaseData());
   } catch (e) {
     console.log(e);
   }
@@ -80,8 +89,11 @@ io.on('connection', async (socket) => {
   });
 
   socket.on('updateMessage', (data) => {
-    console.log('updated message: ', JSON.stringify(data));
-    io.emit('updateMessage', data);
+    socket.broadcast.emit('updateMessage', data);
+  });
+
+  socket.on('updateMarket', ({ data, state }) => {
+    market.emojiTotals(data, state);
   });
 
   socket.on('disconnect', () => {
@@ -90,6 +102,8 @@ io.on('connection', async (socket) => {
   });
 });
 
+
+// actual server location
 http.listen(8081, () => {
   console.log('listening on *:8081');
 });
