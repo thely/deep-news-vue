@@ -3,7 +3,7 @@ import Vue from "vue";
 const market = {
   namespaced: true,
   state: () => ({
-    funds: 100,
+    funds: 1000,
     stockWords: [],
     closePrices: [],
     portfolio: {}
@@ -27,7 +27,6 @@ const market = {
       for (let key of Object.keys(data)) {
         const k = state.stockWords.indexOf(key);
         if (k != -1) {
-          // state.closePrices[k] = parseFloat(data[key].slice(-1)[0]);
           Vue.set(state.closePrices, k, parseFloat(data[key].slice(-1)[0]));
         } else {
           console.log("this doesn't exist somehow");

@@ -42,24 +42,31 @@ class StockMarket {
     this.emojis[data.category].total += state ? 1 : -1;
   }
 
+  changeUserShares(stock, amt) {
+    this.stocks[stock].userShares.final += parseInt(amt);
+  }
+
   addStock(name) {
-    // points = points == null ? [] : points;
     const points = this.stockBaseData();
 
     this.stocks[name] = {
       name: name,
       points: points,
+      userShares: {
+        current: 0,
+        final: 0,
+        rate: 0.5
+      },
     };
 
     return name;
   }
 
-  stockFlux(oldPrice = 10, volatility = 0.1) {
+  stockFlux(oldPrice = 10, volatility = 0.1, userShares = 0) {
     let buyers = Math.random();
     let sellers = Math.random();
 
     let difference = buyers - sellers; // degree of unmet need
-    // console.log("diff: " + difference);
     let average = Math.floor(((sellers + buyers) / 2) * 100); // general amount of traffic
 
     let highest = -1, lowest = 99999, sellPrice = parseFloat(oldPrice);
@@ -68,7 +75,7 @@ class StockMarket {
     for (let i = 0; i < average; i++) {
       let newVol = volatility * Math.random() * 1.1;
       let diff = 2 * newVol * difference;
-      let newPrice = sellPrice + (sellPrice * diff);
+      let newPrice = sellPrice + (sellPrice * diff) + userShares;
 
       priceList.push(newPrice);
 
@@ -86,34 +93,37 @@ class StockMarket {
     }
   }
 
+  // generates the first 20 points of data for the chart
   stockBaseData() {
-    // for (let key of Object.keys(this.emojis)) {
-      // this.addStock(key);
-
       let price = (Math.random() * 50) + 20;
       let points = [];
       for (let i = 0; i < 20; i++) {
-        let priceObj = this.stockFlux(price, Math.random() * 0.2);
+        let priceObj = this.stockFlux(price, Math.random() * 0.2, 0);
         price = priceObj.close;
         points.push(priceObj);
       }
 
-      // this.stocks[key].points = points;
       return points;
-    // }
-    // return this.stocks;
   }
 
+  // loop through all stocks for the next day
   addNextDay() {
     for (let key of Object.keys(this.stocks)) {
+      let curr = this.stocks[key].userShares.current;
+      let final = this.stocks[key].userShares.final;
+      let rate = Math.abs(curr - final) / 10;
+
+      this.stocks[key].userShares.current += (final - curr) * rate;
+
       let price = this.stocks[key].points.slice(-1);
-      let priceObj = this.stockFlux(price.close, Math.random() * 0.2);
+      let priceObj = this.stockFlux(price.close, Math.random() * 0.2, this.stocks[key].userShares.current);
 
       this.stocks[key].points.shift();
       this.stocks[key].points.push(priceObj);
     }
   }
 
+  // run the loop
   stockDayLoop(socketCallback) {
     // let intCount = 0;
     if (this.intervalRunning) {
@@ -127,11 +137,11 @@ class StockMarket {
       this.addNextDay();
       
       socketCallback(this.stocks);
-      // intCount++;
 
       if (!this.marketActive) {
         this.intervalRunning = false;
         clearInterval(interval);
+        console.log("closed for trading");
       }
     }, 2000);
   }

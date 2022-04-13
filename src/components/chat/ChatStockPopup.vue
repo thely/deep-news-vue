@@ -45,11 +45,12 @@ export default {
       return price;
     },
     sellers() {
-      const numSellers = Math.ceil(Math.random() * 5);
+      // const numSellers = Math.ceil(Math.random() * 5);
+      const numSellers = 3;
       let sellers = [];
       for (let i = 0; i < numSellers; i++) {
-        let direction = Math.random() > 0.5 ? 1 : -1;
-        let volatility = (Math.random() * 5 * direction) + 2;
+        let direction = Math.random() > 0.7 ? 1 : -1;
+        let volatility = (Math.random() * 2 * direction);
         sellers.push(parseFloat(this.closePrice + volatility).toFixed(2));
       }
 
@@ -60,7 +61,7 @@ export default {
       let buyers = [];
       for (let i = 0; i < buyCount; i++) {
         let direction = Math.random() > 0.5 ? 1 : -1;
-        let volatility = (Math.random() * 5 * direction) + 2;
+        let volatility = (Math.random() * 2 * direction);
         buyers.push(parseFloat(this.closePrice + volatility).toFixed(2));
       }
 
@@ -78,19 +79,20 @@ export default {
       this.showSellers = !this.showSellers;
     },
     buyStock(e, seller) {
-      console.log(seller);
       this.$store.commit("market/buyStock", {
         stock: this.word,
         cost: seller
       });
 
-      // .filter((x, i) => i !== index);
+      this.$socket.client.emit("buyStock", this.word);
     },
     sellStock(e, buyer) {
       this.$store.commit("market/sellStock", {
         stock: this.word,
         cost: buyer
       });
+
+      this.$socket.client.emit("sellStock", this.word);
     },
     hideDisplay() {
       this.showSellers = false;
@@ -127,7 +129,6 @@ export default {
   }
 
   .seller-list {
-
     li {
       padding-bottom: 0;
       background: white;

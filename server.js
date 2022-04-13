@@ -105,6 +105,14 @@ io.on('connection', async (socket) => {
     socket.broadcast.emit('updateMessage', data);
   });
 
+  socket.on('buyStock', (data) => {
+    market.changeUserShares(data, 1);
+  });
+
+  socket.on('sellStock', (data) => {
+    market.changeUserShares(data, -1);
+  });
+
   socket.on('updateMarket', ({ data, state }) => {
     market.emojiTotals(data, state);
   });
