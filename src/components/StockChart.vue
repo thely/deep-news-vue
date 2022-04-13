@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     funds() {
-      return this.$store.state.market.funds;
+      return parseFloat(this.$store.state.market.funds).toFixed(2);
     },
     stockWords() {
       return this.$store.state.market.stockWords;
@@ -47,6 +47,7 @@ export default {
       if (Object.keys(data).length <= 0) return;
 
       data = this.onlyCloseData(data);
+      this.$store.commit("market/addExistingStocks", Object.keys(data));
       this.$store.commit("market/updateCloseData", data);
       this.stocks = data;
 
