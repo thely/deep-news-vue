@@ -44,10 +44,7 @@ app.get('/videos', (req, res) => {
 let msgID = 0;
 let market = new StockMarket();
 
-market.stockBaseData();
-market.stockDayLoop((data) => {
-  io.emit("stockUpdateData", data);
-});
+// market.stockBaseData();
 
 io.on('connection', async (socket) => {
   console.log(`Client connected [id=${socket.id}]`);
@@ -62,13 +59,17 @@ io.on('connection', async (socket) => {
 
     // tell yourself you exist
     socket.emit('addUser', { id: socket.id, isSelf: true, others: sockets });
-    socket.emit('stockBaseData', market.stocks);
+    // socket.emit('stockBaseData', market.stocks);
   } catch (e) {
     console.log(e);
   }
   
   // tell everyone else you exist
   socket.broadcast.emit('addUser', { id: socket.id, isSelf: false });
+  market.marketActive = true;
+  market.stockDayLoop((data) => {
+    io.emit("stockUpdateData", data);
+  });
 
   // Change username
   socket.on('nameChange', (data) => {
@@ -83,7 +84,6 @@ io.on('connection', async (socket) => {
   // new message entered
   socket.on('message', (data) => {
     console.log('message: ', JSON.stringify(data));
-    market.analyseForStocks(data.msg);
 
     io.emit('message', { 
       user: socket.id,
@@ -93,6 +93,12 @@ io.on('connection', async (socket) => {
     });
 
     msgID++;
+
+    const stock = market.analyseForStocks(data.msg);
+    if (stock) {
+      market.addStock(stock);
+      io.emit('addStock', stock);
+    }
   });
 
   socket.on('updateMessage', (data) => {
@@ -103,9 +109,19 @@ io.on('connection', async (socket) => {
     market.emojiTotals(data, state);
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', async () => {
     console.log(`Client disconnected [id=${socket.id}]`);
     io.emit('deleteUser', { id: socket.id });
+
+    try {
+      sockets = await io.fetchSockets();
+      console.log(sockets.length);
+      if (sockets.length <= 0) {
+        market.marketActive = false;
+      }
+    } catch (e) {
+      console.log(e);
+    }
   });
 });
 

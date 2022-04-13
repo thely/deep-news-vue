@@ -26,32 +26,40 @@ export default {
   computed: {
     funds() {
       return this.$store.state.market.funds;
+    },
+    stockWords() {
+      return this.$store.state.market.stockWords;
     }
   },
   sockets: {
-    stockBaseData(data) {
-      console.log(data);
+    // stockBaseData(data) {
+    //   console.log(data);
 
-      for (let key of Object.keys(data)) {
-        data[key] = data[key].points.map((e) => e.close);
-      }
+    //   data = this.onlyCloseData(data);
 
-      this.stocks = data;
+    //   this.stocks = data;
       
-      this.current = Object.keys(data)[0];
-      this.buildChart(this.stocks[this.current]);
-      this.initialized = true;
-    },
+    //   this.current = Object.keys(data)[0];
+    //   this.buildChart(this.stocks[this.current]);
+    //   this.initialized = true;
+    // },
     stockUpdateData(data) {
-      if (!this.initialized) return;
+      if (Object.keys(data).length <= 0) return;
 
-      console.log("updating data");
-      for (let key of Object.keys(data)) {
-        data[key] = data[key].points.map((e) => e.close);
+      data = this.onlyCloseData(data);
+      this.$store.commit("market/updateCloseData", data);
+      this.stocks = data;
+
+      if (this.current == "") {
+        this.current = Object.keys(data)[0];
       }
 
-      this.stocks = data;
-      this.updateChart(this.stocks[this.current]);
+      if (!this.initialized) {
+        this.buildChart(this.stocks[this.current]);
+        this.initialized = true;
+      } else {
+        this.updateChart(this.stocks[this.current]);
+      }
     }
   },
   beforeDestroy() {
@@ -61,6 +69,7 @@ export default {
   },
   methods: {
     buildChart(data) {
+      console.log(data);
       const ctx = this.$el.querySelector("canvas").getContext('2d');
       
       const dataConfig = {
@@ -114,6 +123,13 @@ export default {
       this.current = key;
 
       this.updateChart(this.stocks[key]);
+    },
+    onlyCloseData(data) {
+      for (let key of Object.keys(data)) {
+        data[key] = data[key].points.map((e) => e.close);
+      }
+
+      return data;
     }
   }
 }

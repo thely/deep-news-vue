@@ -34,18 +34,24 @@ class StockMarket {
     };
 
     this.stocks = {};
+    this.marketActive = false;
+    this.intervalRunning = false;
   }
 
   emojiTotals(data, state) {
     this.emojis[data.category].total += state ? 1 : -1;
   }
 
-  addStock(name, points) {
-    points = points == null ? [] : points;
+  addStock(name) {
+    // points = points == null ? [] : points;
+    const points = this.stockBaseData();
+
     this.stocks[name] = {
       name: name,
       points: points,
     };
+
+    return name;
   }
 
   stockFlux(oldPrice = 10, volatility = 0.1) {
@@ -81,8 +87,8 @@ class StockMarket {
   }
 
   stockBaseData() {
-    for (let key of Object.keys(this.emojis)) {
-      this.addStock(key);
+    // for (let key of Object.keys(this.emojis)) {
+      // this.addStock(key);
 
       let price = (Math.random() * 50) + 20;
       let points = [];
@@ -92,41 +98,76 @@ class StockMarket {
         points.push(priceObj);
       }
 
-      this.stocks[key].points = points;
-      console.log(points);
-    }
-    return this.stocks;
+      // this.stocks[key].points = points;
+      return points;
+    // }
+    // return this.stocks;
   }
 
   addNextDay() {
     for (let key of Object.keys(this.stocks)) {
-      // console.log(this.stocks[key]);
-      let price = this.stocks[key].points[this.stocks[key].points.length - 1];
-      // console.log("price: ");
-      // console.log(price);
+      let price = this.stocks[key].points.slice(-1);
       let priceObj = this.stockFlux(price.close, Math.random() * 0.2);
-      // console.log("priceObj: ");
-      // console.log(priceObj);
 
       this.stocks[key].points.shift();
       this.stocks[key].points.push(priceObj);
     }
-
-    // console.log(this.stocks["smileys"].points);
   }
 
   stockDayLoop(socketCallback) {
-    let intCount = 0;
+    // let intCount = 0;
+    if (this.intervalRunning) {
+      console.log("interval already in progress");
+      console.log(this.interval);
+      return;
+    }
+
     const interval = setInterval(() => {
+      this.intervalRunning = true;
       this.addNextDay();
       
       socketCallback(this.stocks);
-      intCount++;
+      // intCount++;
 
-      if (intCount > 1000) {
+      if (!this.marketActive) {
+        this.intervalRunning = false;
         clearInterval(interval);
       }
     }, 2000);
+  }
+
+  // analyse messages from the chat for potential stock words
+  analyseForStocks(msg) {
+    msg = msg.replace(/[\p{P}$+<=>^`|~]/gu, '').replace(/\s+/g, " ");
+    msg = msg.split(" ");
+    
+    const avgLen = Math.round(msg.map(m => m.length).reduce((a, b) => a + b) / msg.length);
+    const sLength = Object.keys(this.stocks).length;
+
+    // for (let m of msg) {
+    let iterations = 0;
+    while (iterations < 50) {
+      const m = msg[Math.floor(Math.random() * msg.length)];
+      if (m in this.stocks) {
+        continue;
+      }
+
+      if (sLength == 0) {
+        if (m.length >= avgLen) {
+          return m;
+        }
+      } else {
+        if (m.length >= avgLen && Math.random() > 0.2) {
+          return m;
+        } else if (m.length < avgLen && Math.random() > 0.8) {
+          return m;
+        }
+      }
+
+      iterations++;
+    }
+
+    return false;
   }
 }
 

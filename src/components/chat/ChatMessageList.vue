@@ -8,7 +8,8 @@
         <div class="msg-inner">
           <span class="msg-name-mini">{{ msg.name }}</span>
           <div class="msg-text">
-            <span class="msg-text-inner">{{ msg.text }}</span>
+            <ChatMessageSingle :msg="msg.text" />
+            <!-- <span class="msg-text-inner">{{ splitByStockWords(msg.text) }}</span> -->
             <ChatReactionResults :reactions="msg.reactions" :effectiveLength="visibleReactions(msg)" :user="selfID" />
           </div>
           
@@ -20,11 +21,13 @@
 </template>
 
 <script>
+import ChatMessageSingle from './ChatMessageSingle.vue';
 import ChatReacts from './ChatReacts.vue';
 import ChatReactionResults from './ChatReactionResults.vue';
 
 export default {
   components: {
+    ChatMessageSingle,
     ChatReacts,
     ChatReactionResults
   },
@@ -46,7 +49,9 @@ export default {
       console.log(u);
       return u;
     },
-
+    // stockWords() {
+    //   return this.$store.state.market.stockWords;
+    // }
   },
   watch: {
     messages() {
@@ -85,7 +90,13 @@ export default {
       }
 
       return len;
-    }
+    },
+    // splitByStockWords(msg) {
+    //   const result = msg.split(/(hello|yes)/);
+    //   console.log(result);
+
+    //   return result;
+    // }
   }
 }
 </script>
@@ -97,7 +108,8 @@ export default {
   overflow-x: scroll;
   padding: 1.5em;
   transform: skewY(var(--mess-skew));
-  width: var(--mess-list-width);
+  // width: var(--mess-list-width);
+  width: 100%;
 
   ul {
     height: 100%;
