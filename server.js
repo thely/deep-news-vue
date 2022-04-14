@@ -114,7 +114,6 @@ io.on('connection', async (socket) => {
   });
 
   socket.on('updateMarket', ({ data, state, message }) => {
-    console.log(data);
     market.emojiTotals(data, state, message);
   });
 
