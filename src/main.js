@@ -5,7 +5,6 @@ import io from 'socket.io-client';
 
 import store from "./store";
 import App from "./App.vue";
-import VueFullscreen from 'vue-fullscreen'
 
 Vue.config.productionTip = false;
 
@@ -14,7 +13,6 @@ url = "https://kind-bobcat-88.loca.lt";
 
 const socket = io(url, { cors: ['*'] });
 Vue.use(VueSocketIOExt, socket, { store });
-Vue.use(VueFullscreen);
 
 Vue.directive('click-outside', {
   bind: function (element, binding, vnode) {
