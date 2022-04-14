@@ -6,12 +6,14 @@ const market = {
     funds: 1000,
     stockWords: [],
     closePrices: [],
-    portfolio: {}
+    portfolio: {},
+    selectedStock: "",
   }),
   mutations: {
     SOCKET_ADDSTOCK(state, data) {
       if (!state.stockWords.includes(data)) {
         state.stockWords.push(data);
+        state.selectedStock = data;
         Vue.set(state.portfolio, data, 0);
       }
     },
@@ -33,6 +35,13 @@ const market = {
         }
       }
     },
+    changeSelectedStock(state, word) {
+      if (state.stockWords.includes(word)) {
+        state.selectedStock = word;
+      } else {
+        console.log("stock should not be selectable");
+      }
+    },
     buyStock(state, obj) {
       state.portfolio[obj.stock]++;
       state.funds -= parseFloat(obj.cost);
@@ -51,6 +60,12 @@ const market = {
       const k = state.portfolio[key];
       return k;
     }
+  },
+  actions: {
+    summarizeSentiment({ commit }, obj) {
+      commit("setSpeed", obj.state.speed, { root: true });
+      // rootState.controls.
+    },
   }
 }
 

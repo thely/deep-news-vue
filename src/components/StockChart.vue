@@ -1,7 +1,7 @@
 <template>
   <div class="stock-parent">
     <select name="stock-select" @change="changeStock">
-      <option v-for="(stock, index) in stocks" :key="index">
+      <option v-for="(stock, index) in stocks" :selected="index == current" :key="index">
         {{ index }}
       </option>
     </select>
@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       stocks: {},
-      current: "",
+      // current: "",
       initialized: false,
     }
   },
@@ -29,30 +29,34 @@ export default {
     },
     stockWords() {
       return this.$store.state.market.stockWords;
+    },
+    current() {
+      return this.$store.state.market.selectedStock;
+    }
+  },
+  watch: {
+    current(newV) {
+      this.$store.commit("market/changeSelectedStock", newV);
+      if (!this.initialized) {
+        this.buildChart(this.stocks[newV]);
+        this.initialized = true;
+      } else {
+        this.updateChart(this.stocks[newV]);
+      }
     }
   },
   sockets: {
-    // stockBaseData(data) {
-    //   console.log(data);
-
-    //   data = this.onlyCloseData(data);
-
-    //   this.stocks = data;
-      
-    //   this.current = Object.keys(data)[0];
-    //   this.buildChart(this.stocks[this.current]);
-    //   this.initialized = true;
-    // },
     stockUpdateData(data) {
-      if (Object.keys(data).length <= 0) return;
+      if (Object.keys(data).length <= 0 || !("stocks" in data) || Object.keys(data.stocks).length <= 0) return;
 
-      data = this.onlyCloseData(data);
-      this.$store.commit("market/addExistingStocks", Object.keys(data));
-      this.$store.commit("market/updateCloseData", data);
-      this.stocks = data;
+      const stocks = this.onlyCloseData(data.stocks);
+      this.$store.commit("market/addExistingStocks", Object.keys(stocks));
+      this.$store.commit("market/updateCloseData", stocks);
+      this.$store.dispatch("market/summarizeSentiment", { emojis: data.emojis, state: data.state });
+      this.stocks = stocks;
 
       if (this.current == "") {
-        this.current = Object.keys(data)[0];
+        this.$store.commit("market/changeSelectedStock", Object.keys(stocks)[0]);
       }
 
       if (!this.initialized) {
@@ -121,8 +125,9 @@ export default {
     },
     changeStock(e) {
       const key = e.target.value;
-      this.current = key;
+      // this.current = key;
 
+      this.$store.commit("market/changeSelectedStock", key);
       this.updateChart(this.stocks[key]);
     },
     onlyCloseData(data) {

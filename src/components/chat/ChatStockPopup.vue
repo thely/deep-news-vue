@@ -77,6 +77,7 @@ export default {
   methods: {
     displayPopup() {
       this.showSellers = !this.showSellers;
+      this.$store.commit("market/changeSelectedStock", this.word);
     },
     buyStock(e, seller) {
       this.$store.commit("market/buyStock", {
