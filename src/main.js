@@ -9,7 +9,7 @@ import App from "./App.vue";
 Vue.config.productionTip = false;
 
 let url = 'http://localhost:8081';
-url = "https://kind-bobcat-88.loca.lt";
+url = "https://big-badger-51.loca.lt";
 
 const socket = io(url, { cors: ['*'] });
 Vue.use(VueSocketIOExt, socket, { store });
