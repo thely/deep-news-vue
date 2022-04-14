@@ -14,12 +14,20 @@ class StockMarket {
     this.marketSpeed = 2000;
   }
 
+  summarizeMarketState() {
+    return {
+      speed: 2 / ("smileys" in this.emojis && this.emojis.smileys > 0 ? this.emojis.smileys * 0.5 : 1) * 1000,
+      sentiment: this.emojis.places - this.emojis.objects,
+      volatility: this.emojis.symbols,
+    }
+  }
+
   reset() {
     this.emojis = {
-      smileys: 0,     // # of buyers
-      nature: 0,      // # of sellers
-      places: 0,      // degree of volatility
-      objects: 0,     // literal market speed
+      smileys: 0,
+      nature: 0,
+      places: 0,
+      objects: 0,
       symbols: 0
     };
     this.stocks = {};
@@ -77,9 +85,6 @@ class StockMarket {
     let buyers = Math.random() + ("places" in influence ? influence.places : 0);
     let sellers = Math.random() + ("objects" in influence ? influence.objects : 0);
 
-    // let buyers = Math.random();
-    // let sellers = Math.random();
-
     let difference = buyers - sellers; // degree of unmet need
     let average = Math.floor(((sellers + buyers) / 2) * 100); // general amount of traffic
 
@@ -128,8 +133,6 @@ class StockMarket {
       let final = this.stocks[key].userShares.final;
       let rate = Math.abs(curr - final) / (10 - ("nature" in influence ? influence.nature : 0));
       console.log(rate);
-      // console.log("places" in influence ? influence.places : 0);
-      // let rate = curr < final ? 0.5 : curr > final ? 0.25 : 0;
 
       this.stocks[key].userShares.current += (final - curr) * rate;
 
@@ -143,13 +146,11 @@ class StockMarket {
 
   // run the loop
   stockDayLoop(socketCallback) {
-    // let intCount = 0;
     if (this.intervalRunning) {
       console.log("interval already in progress");
       return;
     }
 
-    // const interval = setInterval(() => {
     let f = this;
     (function loop() {
       setTimeout(() => {
@@ -157,16 +158,14 @@ class StockMarket {
         f.intervalRunning = true;
         f.addNextDay();
         
-        socketCallback(f.stocks);
+        socketCallback(f.stocks, f.summarizeMarketState(), f.emojis);
   
         if (!f.marketActive) {
           f.intervalRunning = false;
           console.log("closed for trading");
           f.reset();
         } else {
-          // console.log(f.emojis);
           const time = 2 / ("smileys" in f.emojis && f.emojis.smileys > 0 ? f.emojis.smileys * 0.5 : 1);
-          // console.log(time, console.log(f.emojis.smileys));
           f.marketSpeed = time * 1000;
           loop();
         }

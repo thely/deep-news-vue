@@ -67,8 +67,8 @@ io.on('connection', async (socket) => {
   // tell everyone else you exist
   socket.broadcast.emit('addUser', { id: socket.id, isSelf: false });
   market.marketActive = true;
-  market.stockDayLoop((data) => {
-    io.emit("stockUpdateData", data);
+  market.stockDayLoop((stocks, state, emojis) => {
+    io.emit("stockUpdateData", { stocks: stocks, state: state, emojis: emojis });
   });
 
   // Change username
