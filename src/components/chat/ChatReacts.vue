@@ -33,8 +33,6 @@ export default {
     }
   },
   mounted() {
-    console.log("the user id?");
-    console.log(this.user);
     let tester = [];
     const allCats = Object.keys(emojis);
 
@@ -50,7 +48,6 @@ export default {
         by: [],
       });
 
-      console.log(tester);
     }
 
     this.reacts = tester;
