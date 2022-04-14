@@ -96,6 +96,7 @@ const chat = {
       Vue.prototype.$socket.client.emit("updateMarket", {
         data: react,
         state: enabled,
+        message: m.text,
       });
     },
   },
@@ -107,6 +108,14 @@ const chat = {
         return "...";
       }
     },
+    getMessageByID: (state) => (msgID) => {
+      const msg = state.messages.filter(m => m.msgID == msgID);
+      if (msg.length > 0) {
+        return msg;
+      } else {
+        console.log("no message found like this one");
+      }
+    }
   },
   actions: {
     censorship: ({ state, commit }) => {

@@ -1,36 +1,12 @@
 class StockMarket {
   constructor() {
     this.emojis = {
-      smileys: {
-        total: 0,
-        trend: 0,
-        display: "S",
-      },
-      nature: {
-        total: 0,
-        trend: 0,
-        display: "N",
-      },
-      places: {
-        total: 0,
-        trend: 0,
-        display: "P",
-      },
-      activities: {
-        total: 0,
-        trend: 0,
-        display: "A",
-      },
-      objects: {
-        total: 0,
-        trend: 0,
-        display: "O",
-      },
-      symbols: {
-        total: 0,
-        trend: 0,
-        display: "Y",
-      }
+      smileys: 0,     // # of buyers
+      nature: 0,      // # of sellers
+      places: 0,      // degree of volatility
+      activities: 0,  // user share adjustment speed
+      objects: 0,     // literal market speed
+      symbols: 0
     };
 
     this.stocks = {};
@@ -38,8 +14,28 @@ class StockMarket {
     this.intervalRunning = false;
   }
 
-  emojiTotals(data, state) {
-    this.emojis[data.category].total += state ? 1 : -1;
+  emojiTotals(data, state, message) {
+    let cat = data.category;
+
+    for (let key of Object.keys(this.stocks)) {
+      let total = 0;
+      let msg = message;
+      let pos = message.indexOf(key);
+
+      while (pos > -1) {
+        msg = msg.slice(pos + 1);
+        pos = msg.indexOf(key);
+        total++;
+      }
+
+      if (!(cat in this.stocks[key].emojis)) {
+        this.stocks[key].emojis[cat] = 0;
+      }
+
+      this.stocks[key].emojis[cat] += state ? total : total * -1;
+
+    }
+    this.emojis[cat] += state ? 1 : -1;
   }
 
   changeUserShares(stock, amt) {
@@ -57,14 +53,17 @@ class StockMarket {
         final: 0,
         rate: 0.5
       },
+      emojis: {
+
+      }
     };
 
     return name;
   }
 
-  stockFlux(oldPrice = 10, volatility = 0.1, userShares = 0) {
-    let buyers = Math.random();
-    let sellers = Math.random();
+  stockFlux(oldPrice = 10, volatility = 0.1, userShares = 0, influence = {}) {
+    let buyers = Math.random() + "smileys" in influence ? influence.smileys : 0;
+    let sellers = Math.random() + "nature" in influence ? influence.nature : 0;
 
     let difference = buyers - sellers; // degree of unmet need
     let average = Math.floor(((sellers + buyers) / 2) * 100); // general amount of traffic
@@ -109,14 +108,15 @@ class StockMarket {
   // loop through all stocks for the next day
   addNextDay() {
     for (let key of Object.keys(this.stocks)) {
+      const influence = this.stocks[key].emojis;
       let curr = this.stocks[key].userShares.current;
       let final = this.stocks[key].userShares.final;
-      let rate = Math.abs(curr - final) / 10;
+      let rate = Math.abs(curr - final) / (20 - "places" in influence ? influence.places : 0);
 
       this.stocks[key].userShares.current += (final - curr) * rate;
 
       let price = this.stocks[key].points.slice(-1);
-      let priceObj = this.stockFlux(price.close, Math.random() * 0.2, this.stocks[key].userShares.current);
+      let priceObj = this.stockFlux(price.close, Math.random() * 0.2, this.stocks[key].userShares.current, influence);
 
       this.stocks[key].points.shift();
       this.stocks[key].points.push(priceObj);

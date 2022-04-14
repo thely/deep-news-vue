@@ -113,8 +113,9 @@ io.on('connection', async (socket) => {
     market.changeUserShares(data, -1);
   });
 
-  socket.on('updateMarket', ({ data, state }) => {
-    market.emojiTotals(data, state);
+  socket.on('updateMarket', ({ data, state, message }) => {
+    console.log(data);
+    market.emojiTotals(data, state, message);
   });
 
   socket.on('disconnect', async () => {
