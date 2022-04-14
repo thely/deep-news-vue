@@ -1,17 +1,17 @@
 class StockMarket {
   constructor() {
     this.emojis = {
-      smileys: 0,     // # of buyers
-      nature: 0,      // # of sellers
-      places: 0,      // degree of volatility
-      activities: 0,  // user share adjustment speed
-      objects: 0,     // literal market speed
-      symbols: 0
+      smileys: 0,     // literal market speed
+      nature: 0,      // user share adjustment speed
+      places: 0,      // buyers
+      objects: 0,     // sellers
+      symbols: 0      // volatility
     };
 
     this.stocks = {};
     this.marketActive = false;
     this.intervalRunning = false;
+    this.marketSpeed = 2000;
   }
 
   reset() {
@@ -19,11 +19,11 @@ class StockMarket {
       smileys: 0,     // # of buyers
       nature: 0,      // # of sellers
       places: 0,      // degree of volatility
-      activities: 0,  // user share adjustment speed
       objects: 0,     // literal market speed
       symbols: 0
     };
     this.stocks = {};
+    this.marketSpeed = 2000;
   }
 
   emojiTotals(data, state, message) {
@@ -74,11 +74,11 @@ class StockMarket {
   }
 
   stockFlux(oldPrice = 10, volatility = 0.1, userShares = 0, influence = {}) {
-    // let buyers = Math.random() + "smileys" in influence ? influence.smileys : 0;
-    // let sellers = Math.random() + "nature" in influence ? influence.nature : 0;
+    let buyers = Math.random() + ("places" in influence ? influence.places : 0);
+    let sellers = Math.random() + ("objects" in influence ? influence.objects : 0);
 
-    let buyers = Math.random();
-    let sellers = Math.random();
+    // let buyers = Math.random();
+    // let sellers = Math.random();
 
     let difference = buyers - sellers; // degree of unmet need
     let average = Math.floor(((sellers + buyers) / 2) * 100); // general amount of traffic
@@ -88,7 +88,7 @@ class StockMarket {
 
     for (let i = 0; i < average; i++) {
       let newVol = volatility * Math.random() * 1.1;
-      let diff = 2 * newVol * difference;
+      let diff = newVol * difference * ("symbols" in influence ? influence.symbols : 1);
       let newPrice = sellPrice + (sellPrice * diff) + userShares;
 
       priceList.push(newPrice);
@@ -123,11 +123,13 @@ class StockMarket {
   // loop through all stocks for the next day
   addNextDay() {
     for (let key of Object.keys(this.stocks)) {
-      // const influence = this.stocks[key].emojis;
+      const influence = this.stocks[key].emojis;
       let curr = this.stocks[key].userShares.current;
       let final = this.stocks[key].userShares.final;
-      // let rate = Math.abs(curr - final) / (20 - "places" in influence ? influence.places : 0);
-      let rate = curr < final ? 0.5 : curr > final ? 0.25 : 0;
+      let rate = Math.abs(curr - final) / (10 - ("nature" in influence ? influence.nature : 0));
+      console.log(rate);
+      // console.log("places" in influence ? influence.places : 0);
+      // let rate = curr < final ? 0.5 : curr > final ? 0.25 : 0;
 
       this.stocks[key].userShares.current += (final - curr) * rate;
 
@@ -144,23 +146,32 @@ class StockMarket {
     // let intCount = 0;
     if (this.intervalRunning) {
       console.log("interval already in progress");
-      console.log(this.interval);
       return;
     }
 
-    const interval = setInterval(() => {
-      this.intervalRunning = true;
-      this.addNextDay();
-      
-      socketCallback(this.stocks);
-
-      if (!this.marketActive) {
-        this.intervalRunning = false;
-        clearInterval(interval);
-        console.log("closed for trading");
-        this.reset();
-      }
-    }, 2000);
+    // const interval = setInterval(() => {
+    let f = this;
+    (function loop() {
+      setTimeout(() => {
+        console.log("single loop");
+        f.intervalRunning = true;
+        f.addNextDay();
+        
+        socketCallback(f.stocks);
+  
+        if (!f.marketActive) {
+          f.intervalRunning = false;
+          console.log("closed for trading");
+          f.reset();
+        } else {
+          // console.log(f.emojis);
+          const time = 2 / ("smileys" in f.emojis && f.emojis.smileys > 0 ? f.emojis.smileys * 0.5 : 1);
+          // console.log(time, console.log(f.emojis.smileys));
+          f.marketSpeed = time * 1000;
+          loop();
+        }
+      }, f.marketSpeed);
+    })();
   }
 
   // analyse messages from the chat for potential stock words
@@ -174,6 +185,7 @@ class StockMarket {
     // for (let m of msg) {
     let iterations = 0;
     while (iterations < 50) {
+      iterations++;
       const m = msg[Math.floor(Math.random() * msg.length)];
       if (m in this.stocks) {
         continue;
@@ -190,9 +202,9 @@ class StockMarket {
           return m;
         }
       }
-
-      iterations++;
     }
+
+    console.log("couldn't find anything");
 
     return false;
   }
