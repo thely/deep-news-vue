@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 import patchList from "./HydraMixer.js";
 const Hydra = require("hydra-synth");
+const loop = require('raf-loop');
 
 class HydraHandle {
   constructor() {
+    this.timeInterval = 1000;
     const h = this.initPatch("#hydra-large", 800, 450, this.randomPatch());
     const h2 = this.initPatch("#hydra-small", 400, 225, this.randomPatch());
 
@@ -23,16 +25,56 @@ class HydraHandle {
 
     h.setResolution(width, height);
     h.patch = func;
+    h.timeInterval = this.timeInterval;
+    h.isManualRunning = false;
+    h.isAutoRunning = false;
+    h.rafEngine = loop((dt) => { h.tick(dt); })
 
-    setInterval(() => {
-      h.tick(200);
-    }, 200);
+    this.renderSwitch(h);
+    // (function loop() {
+    //   setTimeout(() => {
+    //     h.tick(h.timeInterval);
+    //     if (h.manualMode) {
+    //       loop();
+    //     }
+    //   }, h.timeInterval);
+    // })();
 
     return h;
   }
 
+  renderSwitch(h) {
+    if (h.timeInterval > 300) {
+      console.log("switch to manual mode");
+      h.rafEngine.stop();
+      h.isAutoRunning = false;
+
+      if (!h.isManualRunning) {
+        (function loop() {
+          setTimeout(() => {
+            h.isManualRunning = true;
+            h.tick(h.timeInterval);
+            if (h.timeInterval > 300 && h.isManualRunning) {
+              loop();
+            } else {
+              h.isManualRunning = false;
+            }
+          }, h.timeInterval);
+        })();
+      }
+    } 
+    
+    else if (!h.isAutoRunning) {
+      console.log("switch to requestanimation");
+      h.isAutoRunning = true;
+      h.rafEngine.start();
+    }
+  }
+
   runAll(data) {
     for (let i = 0; i < this.patches.length; i++) {
+      this.patches[i].timeInterval = data.speed / 2;
+      this.renderSwitch(this.patches[i]);
       this.runOne(i, data);
     }
   }

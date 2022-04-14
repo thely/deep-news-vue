@@ -2,7 +2,7 @@
   <div id="app">
     <ChatBox :controls="controls" />
     <VideoLoader v-if="vidFilesExist" />
-    <!-- <Hydra v-if="vidFilesExist" :loaders="loaders" :controls="controls" /> -->
+    <Hydra v-if="vidFilesExist" :loaders="loaders" :controls="controls" />
     <Xebra :loaders="loaders" :controls="controls" />
     <!-- <Controls /> -->
     <StockChart />
@@ -43,7 +43,8 @@ export default {
     controls() {
       const controls = {
         freqVal: parseFloat(this.$store.state.freqVal),
-        modVal: parseFloat(this.$store.state.modVal)
+        modVal: parseFloat(this.$store.state.modVal),
+        speed: parseFloat(this.$store.state.speed)
       }
       return controls;
     },

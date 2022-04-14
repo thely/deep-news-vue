@@ -16,9 +16,13 @@ export default new Vuex.Store({
   state: () => ({ 
     freqVal: 20,
     modVal: 20,
+    speed: 2000,
     // mouseDown: false,
   }),
   mutations: {
+    setSpeed(state, val) {
+      state.speed = val;
+    },
     updateFreq(state, val) {
       state.freqVal = val;
       // console.log(state.freqVal);
