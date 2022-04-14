@@ -5,21 +5,22 @@ import io from 'socket.io-client';
 
 import store from "./store";
 import App from "./App.vue";
-// import directive from "./utils/click-outside.js";
+import VueFullscreen from 'vue-fullscreen'
 
 Vue.config.productionTip = false;
 
-const socket = io('http://localhost:8081', { cors: ['*'] });
-Vue.use(VueSocketIOExt, socket, { store });
+let url = 'http://localhost:8081';
+url = "https://kind-bobcat-88.loca.lt";
 
-// Vue.directive('click-outside', directive);
+const socket = io(url, { cors: ['*'] });
+Vue.use(VueSocketIOExt, socket, { store });
+Vue.use(VueFullscreen);
 
 Vue.directive('click-outside', {
   bind: function (element, binding, vnode) {
     element.clickOutsideEvent = function (event) {  //  check that click was outside the el and his children
       if (!(element === event.target || element.contains(event.target))) { // and if it did, call method provided in attribute value
         vnode.context[binding.expression](event);
-        // binding.value(); run the arg
       }
     };
     document.body.addEventListener('click', element.clickOutsideEvent)
