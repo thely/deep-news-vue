@@ -1,13 +1,13 @@
 <template>
   <div class="stock-parent">
-    <select name="stock-select" @change="changeStock">
+    <select name="stock-select" class="stock-select" @change="changeStock" v-show="initialized">
       <option v-for="(stock, index) in stocks" :selected="index == current" :key="index">
         {{ index }}
       </option>
     </select>
     <span v-if="stocks != null && current in stocks">{{ current }}: ${{ parseFloat(stocks[current].slice(-1)[0]).toFixed(2) }}</span>
+    <canvas id="myChart" width="400" height="200" :class="initialized ? '' : 'canvas-active'"></canvas>
     <span>funds: ${{ funds }}</span>
-    <canvas id="myChart" width="400" height="200"></canvas>
   </div>
 </template>
 
@@ -90,6 +90,18 @@ export default {
           },
         ]
       }
+
+      // const plugin = {
+      //   id: 'custom_canvas_background_color',
+      //   beforeDraw: (chart) => {
+      //     const ctx = chart.canvas.getContext('2d');
+      //     ctx.save();
+      //     ctx.globalCompositeOperation = 'destination-over';
+      //     ctx.fillStyle = 'lightGreen';
+      //     ctx.fillRect(0, 0, chart.width, chart.height);
+      //     ctx.restore();
+      //   }
+      // };
       
       myChart = new Chart(ctx, {
         type: "line",
@@ -117,6 +129,7 @@ export default {
             }
           }
         },
+        // plugins: [plugin]
       })
     },
     updateChart(data) {
@@ -162,9 +175,23 @@ export default {
   // height: 200px;
 
   position: absolute;
-  bottom: 0;
-  background: white;
+  bottom: 5rem;
+  background: #fffea8;
   left: 36vw;
   padding: 1em;
+
+  canvas {
+    display: block;
+
+    &.canvas-active {
+      background: #c4c4c4;
+    }
+  }
+
+  .stock-select {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+  }
 }
 </style>

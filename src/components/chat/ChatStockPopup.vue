@@ -1,6 +1,6 @@
 <template>
   <div class="stock-word-parent" v-click-outside="hideDisplay">
-    <span @click="displayPopup" class="stock-word">
+    <span @click="displayPopup" class="stock-word" :class="word == currentStock ? 'selected-stock-word' : ''">
       {{ word }}
     </span>
 
@@ -72,6 +72,9 @@ export default {
     },
     funds() {
       return this.$store.state.market.funds;
+    },
+    currentStock() {
+      return this.$store.state.market.selectedStock;
     }
   },
   methods: {
@@ -109,6 +112,11 @@ export default {
   .stock-word {
     border-bottom: 2px dotted red;
     cursor: pointer;
+
+    &.selected-stock-word {
+      background: yellow;
+      color: black;
+    }
   }
 
   .popup-parent {
