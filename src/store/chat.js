@@ -180,7 +180,7 @@ function alterToRule(m, rules) {
 }
 
 
-const nameList = ["beluga", "transformer", "factorio", "gentleman"];
+const nameList = ["Roland", "Marshall", "Simone", "Jacques", "Jean-Paul", "Hannah", "Angela"];
 
 function randomName() {
   const i = Math.floor(Math.random() * nameList.length);
