@@ -6,6 +6,14 @@ import StockMarket from "./srv/StockMarketSimulator.js";
 const fs = require('fs');
 const path = require('path');
 
+
+// const ngrok = require('ngrok');
+const localtunnel = require('localtunnel');
+// const util = require('util');
+// const exec = util.promisify(require('child_process').exec);
+// const { exec: execAsync } = require('child-process-async');
+// const open = require('open');
+
 const express = require('express');
 const cors = require('cors');
 
@@ -133,8 +141,60 @@ io.on('connection', async (socket) => {
   });
 });
 
+// const fs = require('fs');
+// const data = {table:[{id: 1, name: 'my name'}]}
+const file_path = './.env';
+
+async function writeFile(filename, writedata) {
+  try {
+    await fs.promises.writeFile(filename, writedata, 'utf8');
+    console.log('data is written successfully in the file')
+  }
+  catch (err) {
+    console.log('not able to write data in the file ')
+  }
+}
+
 
 // actual server location
 http.listen(8081, () => {
   console.log('listening on *:8081');
+
+  // 
+  // (async () => {
+  //   await ngrok.authtoken("27qfyITYRTTuJLV6ydrtwtCPEw7_3EZUFKCjNd9Z1N5rxdhKt");
+  //   const url = await ngrok.connect({
+  //     addr: 8081,
+  //     // hostHeader: "rewrite",
+  //   });
+  //   await writeFile(file_path, `VUE_APP_SERVER=${url}`);
+  //   console.log(url);
+  // })();
+  
+  (async () => {
+    let tunnel;
+    try {
+      tunnel = await localtunnel({ port: 8081 });
+      await writeFile(file_path, `VUE_APP_SERVER=${tunnel.url}`);
+      await writeFile("run-test/OPENME.txt", tunnel.url);
+      // const result = await exec(`curl -H "Disable-Tunnel-Reminder: true" --insecure ${url}`);
+      // console.log(result);
+      
+    } catch (e) {
+      console.log(e);
+    }
+
+    // const url = tunnel.url.replace("https", "http");
+    // open(url).then(proc => {
+    //   proc.on('error', (e) => { console.log(e); });
+    // })
+    // .catch((e) => console.log(e));
+
+    // console.log("opening tunnel");
+    console.log(tunnel.url);
+
+    tunnel.on('close', () => {
+      console.log("closing tunnel");
+    });
+  })();
 });
