@@ -9,7 +9,7 @@
       <span class="stock-name">{{ current }}</span>
       <span>${{ parseFloat(stocks[current].slice(-1)[0]).toFixed(2) }}</span>
     </div>
-    <canvas id="myChart" width="400" height="200" :class="initialized ? '' : 'canvas-active'"></canvas>
+    <canvas id="myChart" width="390" height="200" :class="initialized ? '' : 'canvas-active'"></canvas>
     <span>funds: ${{ funds }}</span>
   </div>
 </template>
@@ -180,8 +180,9 @@ export default {
   position: absolute;
   bottom: 5rem;
   background: #fffea8;
-  left: 36vw;
+  left: 33vw;
   padding: 1em;
+  z-index: 9999;
 
   font-family: var(--mono-font);
 

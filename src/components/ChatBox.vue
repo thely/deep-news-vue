@@ -33,7 +33,7 @@ export default {
 .chat-block {
   margin: 1em;
   margin-bottom: 4rem;
-  width: 34vw;
+  width: 32vw;
   height: calc(100vh - 6em);
   max-height: 100vh;
   position: relative;
