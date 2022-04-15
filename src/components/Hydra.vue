@@ -25,6 +25,9 @@ export default {
       const loaded = this.$store.state.videos.loadedOnce;
       return loaded;
     },
+    currentStock() {
+      return this.$store.state.market.selectedStock;
+    }
   },
   watch: {
     loaders(newV, oldV) {
@@ -47,6 +50,10 @@ export default {
     controls(newV) {
       hydra.runAll(newV);
     },
+    currentStock() {
+      hydra.switchOne();
+      hydra.runAll(this.controls);
+    }
   },
   mounted() {
     hydra = new HydraHandle();

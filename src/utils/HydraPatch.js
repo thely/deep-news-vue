@@ -20,7 +20,8 @@ class HydraHandle {
       width: width,
       height: height,
       numSources: 1,
-      autoLoop: false
+      numOutputs: 1,
+      // autoLoop: false
     }).synth;
 
     h.setResolution(width, height);
@@ -30,21 +31,13 @@ class HydraHandle {
     h.isAutoRunning = false;
     h.rafEngine = loop((dt) => { h.tick(dt); })
 
-    this.renderSwitch(h);
-    // (function loop() {
-    //   setTimeout(() => {
-    //     h.tick(h.timeInterval);
-    //     if (h.manualMode) {
-    //       loop();
-    //     }
-    //   }, h.timeInterval);
-    // })();
+    // this.renderSwitch(h);
 
     return h;
   }
 
   renderSwitch(h) {
-    if (h.timeInterval > 300) {
+    if (h.timeInterval > 100) {
       console.log("switch to manual mode");
       h.rafEngine.stop();
       h.isAutoRunning = false;
@@ -54,7 +47,7 @@ class HydraHandle {
           setTimeout(() => {
             h.isManualRunning = true;
             h.tick(h.timeInterval);
-            if (h.timeInterval > 300 && h.isManualRunning) {
+            if (h.timeInterval > 100 && h.isManualRunning) {
               loop();
             } else {
               h.isManualRunning = false;
@@ -73,8 +66,8 @@ class HydraHandle {
 
   runAll(data) {
     for (let i = 0; i < this.patches.length; i++) {
-      this.patches[i].timeInterval = data.speed / 2;
-      this.renderSwitch(this.patches[i]);
+      this.patches[i].timeInterval = data.speed / 4;
+      // this.renderSwitch(this.patches[i]);
       this.runOne(i, data);
     }
   }
@@ -85,6 +78,13 @@ class HydraHandle {
 
   videoNotify(player, patch) {
     this.patches[patch].s0.init({ src: player, dynamic: true });
+  }
+
+  switchOne() {
+    const p = Math.random() > 0.5 ? 0 : 1;
+    this.patches[p].patch = this.randomPatch();
+
+    // this.runAll(data);
   }
 
   changePatches(data) {

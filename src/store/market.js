@@ -6,6 +6,7 @@ const market = {
     funds: 1000,
     stockWords: [],
     closePrices: [],
+    totalShares: [],
     portfolio: {},
     selectedStock: "",
   }),
@@ -35,6 +36,16 @@ const market = {
         }
       }
     },
+    updateTotalShares(state, data) {
+      for (let key of Object.keys(data)) {
+        const k = state.stockWords.indexOf(key);
+        if (k != -1) {
+          Vue.set(state.totalShares, k, parseInt(data[key]));
+        } else {
+          console.log("this doesn't exist somehow");
+        }
+      }
+    },
     changeSelectedStock(state, word) {
       if (state.stockWords.includes(word)) {
         state.selectedStock = word;
@@ -56,9 +67,44 @@ const market = {
       const k = state.stockWords.indexOf(key);
       return state.closePrices[k];
     },
+    getCurrentStockClosePrice: (state, getters) => {
+      const c = getters.getStockClosePrice(state.selectedStock);
+      return c != null ? c : 0;
+    },
+    getStockTotalShares: (state) => (key) => {
+      const k = state.stockWords.indexOf(key);
+      return state.totalShares[k];
+    },
     getUserStockCount: (state) => (key) => {
       const k = state.portfolio[key];
       return k;
+    },
+    getCurrentStockCount: (state, getters) => {
+      const c = getters.getUserStockCount(state.selectedStock);
+      return c != null ? c : 0;
+    },
+    getUserNetWorth: (state, getters) => {
+      if (Object.keys(state.portfolio).length <= 0) return 0;
+      let worth = 0;
+
+      for (let stock of Object.keys(state.portfolio)) {
+        const prix = getters.getStockClosePrice(stock);
+        worth += prix * state.portfolio[stock];
+      }
+
+      return worth;
+    },
+    getOtherNetWorth: (state, getters) => {
+      let otherWorth = 0;
+      for (let stock of state.stockWords) {
+        const index = state.stockWords.indexOf(stock);
+        const remainder = state.totalShares[index] - state.portfolio[stock];
+        const prix = getters.getStockClosePrice(stock);
+        
+        otherWorth += prix * remainder;
+      }
+
+      return otherWorth;
     }
   },
   actions: {

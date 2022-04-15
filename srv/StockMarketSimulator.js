@@ -132,7 +132,7 @@ class StockMarket {
       let curr = this.stocks[key].userShares.current;
       let final = this.stocks[key].userShares.final;
       let rate = Math.abs(curr - final) / (10 - ("nature" in influence ? influence.nature : 0));
-      console.log(rate);
+      // console.log(rate);
 
       this.stocks[key].userShares.current += (final - curr) * rate;
 
@@ -154,7 +154,6 @@ class StockMarket {
     let f = this;
     (function loop() {
       setTimeout(() => {
-        console.log("single loop");
         f.intervalRunning = true;
         f.addNextDay();
         
@@ -175,11 +174,14 @@ class StockMarket {
 
   // analyse messages from the chat for potential stock words
   analyseForStocks(msg) {
+    const sLength = Object.keys(this.stocks).length;
+    if (sLength > 7) return;
+    
     msg = msg.replace(/[\p{P}$+<=>^`|~]/gu, '').replace(/\s+/g, " ");
     msg = msg.split(" ");
     
     const avgLen = Math.round(msg.map(m => m.length).reduce((a, b) => a + b) / msg.length);
-    const sLength = Object.keys(this.stocks).length;
+    
 
     // for (let m of msg) {
     let iterations = 0;
@@ -203,31 +205,10 @@ class StockMarket {
       }
     }
 
-    console.log("couldn't find anything");
+    console.log("no new stocks to speak of");
 
     return false;
   }
 }
 
 export default StockMarket;
-
-// degree of volatility
-// trend: up or down
-
-// start with 1000 shares per stock
-// each stock starts at $10, for a market cap of $10k
-// each message can present one new word as a potential stock
-// buy or sell stocks through the little popup
-// trading will continue in the background based on emoji counts
-
-// "points" are indicated by the current price vs
-// the average of the last ten pips of data
-
-// on every "tick," generate x number of sell orders at y fuzzy price
-// generate x number of buy orders
-
-// how many sellers, how many buyers, degree of volatility
-// how many total shares, current trend
-
-
-// stock words can go bankrupt, meaning they can no longer be used: enter the censor!

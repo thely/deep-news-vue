@@ -6,7 +6,8 @@ const chat = {
     users: {},
     selfID: "",
     messages: [],
-    rules: { worm: "wood", butter: "cream" }
+    rules: { worm: "wood", butter: "cream" },
+    messageCount: 0,
   }),
   mutations: {
     SOCKET_MESSAGE(state, msg) {
@@ -20,6 +21,12 @@ const chat = {
         id: msg.user,
         reactions: [],
       });
+
+      state.messageCount++;
+
+      if (state.messages.length > 20) {
+        state.messages.shift();
+      }
     },
 
     SOCKET_UPDATEMESSAGE(state, msg) {
@@ -115,6 +122,11 @@ const chat = {
       } else {
         console.log("no message found like this one");
       }
+    },
+    getLastMessageLength: (state) => {
+      if (state.messages.length <= 0) return 0;
+      
+      return state.messages[state.messages.length - 1].text.length;
     }
   },
   actions: {

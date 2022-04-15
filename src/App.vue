@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" @click="clickCounter">
     <ChatBox :controls="controls" />
     <VideoLoader v-if="vidFilesExist" />
     <Hydra v-if="vidFilesExist" :loaders="loaders" :controls="controls" />
@@ -33,6 +33,7 @@ export default {
   data() {
     return {
       vidFilesExist: false,
+      clickCount: 0,
     }
   },
   computed: {
@@ -42,10 +43,17 @@ export default {
     },
     controls() {
       const controls = {
-        freqVal: parseFloat(this.$store.state.freqVal),
-        modVal: parseFloat(this.$store.state.modVal),
-        speed: parseFloat(this.$store.state.speed)
+        speed: parseFloat(this.$store.state.speed),
+        netWorth: this.$store.getters["market/getUserNetWorth"],
+        otherNetWorth: this.$store.getters["market/getOtherNetWorth"],
+        currentStockShares: this.$store.getters["market/getCurrentStockCount"],
+        currentStockClose: this.$store.getters["market/getCurrentStockClosePrice"],
+        messageLength: this.$store.getters["chat/getLastMessageLength"],
+        clickCount: this.clickCount
       }
+
+      console.log(controls);
+
       return controls;
     },
   },
@@ -58,6 +66,13 @@ export default {
     connect() {
       console.log("connected");
     },
+  },
+  methods: {
+    clickCounter() {
+      this.clickCount ++;
+      // this.clickCount = Math.max(0, this.clickCount);
+      console.log("clicked");
+    }
   }
 }
 </script>

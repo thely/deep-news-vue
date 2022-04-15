@@ -36,6 +36,7 @@ export default {
   },
   watch: {
     current(newV) {
+      if (!(newV in this.stocks)) return;
       this.$store.commit("market/changeSelectedStock", newV);
       if (!this.initialized) {
         this.buildChart(this.stocks[newV]);
@@ -50,8 +51,11 @@ export default {
       if (Object.keys(data).length <= 0 || !("stocks" in data) || Object.keys(data.stocks).length <= 0) return;
 
       const stocks = this.onlyCloseData(data.stocks);
+      const shares = this.onlyUserShares(data.stocks);
       this.$store.commit("market/addExistingStocks", Object.keys(stocks));
       this.$store.commit("market/updateCloseData", stocks);
+      this.$store.commit("market/updateTotalShares", shares);
+      
       this.$store.dispatch("market/summarizeSentiment", { emojis: data.emojis, state: data.state });
       this.stocks = stocks;
 
@@ -125,17 +129,28 @@ export default {
     },
     changeStock(e) {
       const key = e.target.value;
-      // this.current = key;
 
       this.$store.commit("market/changeSelectedStock", key);
       this.updateChart(this.stocks[key]);
     },
     onlyCloseData(data) {
+      let retval = {};
       for (let key of Object.keys(data)) {
-        data[key] = data[key].points.map((e) => e.close);
+        retval[key] = data[key].points.map((e) => e.close);
       }
 
-      return data;
+      return retval;
+    },
+    onlyUserShares(data) {
+      console.log(data);
+      let retval = {};
+      for (let key of Object.keys(data)) {
+        retval[key] = data[key].userShares.final;
+        // console.log(data[key].userShares);
+        // retval[key] = data[key].userShares.map((e) => e.final);
+      }
+
+      return retval;
     }
   }
 }

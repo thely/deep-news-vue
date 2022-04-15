@@ -8,7 +8,6 @@
           :data-pindex="pindex"
           :class="`loader-single video-${index}-${pindex}`"
           playsinline 
-          muted 
           :src="$store.getters['videos/getFilename'](index, pindex)"
           @playing="videoStarted" 
           @ended="videoEnded"
@@ -69,7 +68,11 @@ export default {
 
 <style lang="scss">
   .video-container {
-    display: none;
+    visibility: hidden;
+    position: absolute;
+    top: 0;
+    z-index: -1000;
+
     video {
       width: 200px;
     }

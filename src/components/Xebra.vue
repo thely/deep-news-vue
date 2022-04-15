@@ -11,11 +11,11 @@ export default {
     loaders: Array,
     controls: Object,
   },
-  // computed: {
-  //   freqVal() {
-  //     return this.$store.state.freqVal;
-  //   },
-  // },
+  computed: {
+    messageCount() {
+      return this.$store.state.chat.messageCount;
+    },
+  },
   mounted() {
     const options = {
       hostname : "127.0.0.1", // localhost
@@ -33,17 +33,13 @@ export default {
     
   },
   watch: {
-    loaders(newV) {
-      let retval = [];
-
-      for (let i = 0; i < newV.length; i++) {
-        retval[i] = newV[i].nowPlaying == -1 ? -1 : newV[i].players[newV[i].nowPlaying];
-      }
-
-      this.sendToMax("videos", retval);
-    },
     controls(newV) {
       this.sendToMax("controls", newV);
+    },
+    messageCount(newV) {
+      if (Math.random() > 0.8) {
+        this.sendToMax("delayShift", newV);
+      }
     }
   },
   methods: {
@@ -51,7 +47,8 @@ export default {
       try {
         maxConn.sendMessageToChannel(key, value);
       } catch (e) {
-        console.log("no max connection");
+        // console.log("no max connection");
+        return;
       } 
     }
   }
