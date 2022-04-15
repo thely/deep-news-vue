@@ -29,8 +29,9 @@ export default {
 <style lang="scss">
 .chat-block {
   margin: 1em;
+  margin-bottom: 4rem;
   width: 34vw;
-  height: calc(100vh - 2em);
+  height: calc(100vh - 6em);
   max-height: 100vh;
 
   // background-color: rgb(194, 190, 199);

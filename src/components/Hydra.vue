@@ -81,7 +81,7 @@ export default {
 }
 
 #hydra-small {
-  bottom: 1.5em;
+  bottom: 5rem;
   right: 1.5em;
 }
 

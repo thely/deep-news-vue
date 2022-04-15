@@ -6,6 +6,7 @@
     <Xebra :loaders="loaders" :controls="controls" />
     <!-- <Controls /> -->
     <StockChart />
+    <NewsTicker />
   </div>
 </template>
 
@@ -17,6 +18,7 @@ import ChatBox from './components/ChatBox.vue';
 import Controls from './components/Controls.vue';
 import Xebra from './components/Xebra.vue';
 import StockChart from './components/StockChart.vue';
+import NewsTicker from './components/NewsTicker.vue';
 
 // https://en.wikipedia.org/wiki/Special:RandomInCategory/Category:Member_states_of_the_United_Nations
 
@@ -28,7 +30,8 @@ export default {
     ChatBox,
     Controls,
     Xebra,
-    StockChart
+    StockChart,
+    NewsTicker
   },
   data() {
     return {
