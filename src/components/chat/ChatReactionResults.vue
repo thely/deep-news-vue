@@ -21,13 +21,16 @@ export default {
   position: absolute;
   top: -1em;
   right: 0;
-  font-size: 0.8em;
-  letter-spacing: -1.2px;
-  background: #160a40;
+  font-size: 0.9em;
+  letter-spacing: -1px;
+  background: white;
   padding: 0.1em 0.2em;
-  border: 1px solid white;
+  // border: 1px solid grey;
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.25);
 
   .react-length {
+    font-size: 0.9em;
     padding-left: 5px;
   }
 }

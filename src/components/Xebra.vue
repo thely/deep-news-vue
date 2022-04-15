@@ -41,7 +41,10 @@ export default {
         this.sendToMax("delayShift", newV);
       }
 
-      if (newV % 3 != 1) {
+      const senderIsOther = this.$store.getters['chat/getLastMessageSender'];
+      console.log(senderIsOther);
+      if (senderIsOther && newV % 3 != 1) {
+        console.log("from other!");
         const time = Math.random() * 100 + 50;
         let x = this;
         setTimeout(() => {

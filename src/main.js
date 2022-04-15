@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 import VueSocketIOExt from 'vue-socket.io-extended';
 import io from 'socket.io-client';
+import MarqueeText from 'vue-marquee-text-component';
 
 import store from "./store";
 import App from "./App.vue";
@@ -9,10 +10,11 @@ import App from "./App.vue";
 Vue.config.productionTip = false;
 
 let url = 'http://localhost:8081';
-url = "https://quiet-turkey-29.loca.lt";
+url = process.env.VUE_APP_SERVER;
 
 const socket = io(url, { cors: ['*'] });
 Vue.use(VueSocketIOExt, socket, { store });
+Vue.component('marquee-text', MarqueeText);
 
 Vue.directive('click-outside', {
   bind: function (element, binding, vnode) {

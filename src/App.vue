@@ -55,8 +55,6 @@ export default {
         clickCount: this.clickCount
       }
 
-      console.log(controls);
-
       return controls;
     },
   },
@@ -72,18 +70,20 @@ export default {
   },
   methods: {
     clickCounter() {
-      this.clickCount ++;
-      // this.clickCount = Math.max(0, this.clickCount);
-      console.log("clicked");
+      this.clickCount++;
     }
   }
 }
 </script>
 
 <style>
+:root {
+  --mono-font: monospace;
+  --chat-font: "Helvetica Neue", sans-serif;
+}
 * {
   box-sizing: border-box;
-  font-family: monospace;
+  /* font-family: monospace; */
 }
 
 body {
@@ -97,5 +97,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  max-width: 100vw;
+  overflow: hidden;
 }
 </style>

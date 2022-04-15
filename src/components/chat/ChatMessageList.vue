@@ -105,6 +105,8 @@ export default {
 .chat-messages {
   --mess-list-width: 100%;
   --mess-skew: 0deg;
+
+  font-family: var(--chat-font);
   overflow-x: scroll;
   padding: 1.5em;
   transform: skewY(var(--mess-skew));
@@ -127,14 +129,18 @@ export default {
 
       .msg-name-mini {
         display: block;
-        color: #aaa;
+        color: rgb(69, 69, 69);
         font-size: 0.65em;
       }
 
       .msg-text {
-        background-color: blue;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+        color: black;
         display: inline-block;
-        padding: 0.2em;
+        font-size: 0.8em;
+        padding: 0.4em;
         position: relative;
         width: 100%;
       }

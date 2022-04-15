@@ -13,7 +13,7 @@ function patch1(h, data) {
     v1 = 0.1;
   }
 
-  console.log(v4);
+  // console.log(v4);
   
   h.src(h.s0)
     .modulatePixelate(h.voronoi(40,100,v3).pixelate(v4,v4),({time}) => 400+(250*(Math.sin(time*0.1))),8)
@@ -93,7 +93,7 @@ function patch4(h, data) {
     v2 = 100;
   }
 
-  console.log(v1, v2);
+  // console.log(v1, v2);
   //Patch4
   h.src(h.s0)
     .hue(({time}) => Math.sin(time * v1)) // hue speed: Math.sin(time*speed), discret values :[1, 100]

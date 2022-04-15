@@ -45,6 +45,7 @@ export default {
 
 <style lang="scss">
 .chat-name {
+  font-family: var(--chat-font);
   padding: 1em;
   
   h4 {
@@ -58,6 +59,8 @@ export default {
   }
 
   span {
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px rgba(0,0,0,0.25);
     font-weight: bold;
     padding: 3px;
     color: black;

@@ -5,7 +5,10 @@
         {{ index }}
       </option>
     </select>
-    <span v-if="stocks != null && current in stocks">{{ current }}: ${{ parseFloat(stocks[current].slice(-1)[0]).toFixed(2) }}</span>
+    <div v-if="stocks != null && current in stocks" class="stock-header">
+      <span class="stock-name">{{ current }}</span>
+      <span>${{ parseFloat(stocks[current].slice(-1)[0]).toFixed(2) }}</span>
+    </div>
     <canvas id="myChart" width="400" height="200" :class="initialized ? '' : 'canvas-active'"></canvas>
     <span>funds: ${{ funds }}</span>
   </div>
@@ -78,7 +81,7 @@ export default {
   },
   methods: {
     buildChart(data) {
-      console.log(data);
+      // console.log(data);
       const ctx = this.$el.querySelector("canvas").getContext('2d');
       
       const dataConfig = {
@@ -155,7 +158,7 @@ export default {
       return retval;
     },
     onlyUserShares(data) {
-      console.log(data);
+      // console.log(data);
       let retval = {};
       for (let key of Object.keys(data)) {
         retval[key] = data[key].userShares.final;
@@ -180,6 +183,8 @@ export default {
   left: 36vw;
   padding: 1em;
 
+  font-family: var(--mono-font);
+
   canvas {
     display: block;
 
@@ -192,6 +197,12 @@ export default {
     position: absolute;
     top: 0.5em;
     right: 0.5em;
+  }
+
+  .stock-name {
+    font-size: 1.5em;
+    text-transform: uppercase;
+    margin-right: 0.5em;
   }
 }
 </style>

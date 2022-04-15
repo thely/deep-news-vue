@@ -30,26 +30,34 @@ export default {
 
 <style lang="scss">
 .chat-writing {
+  font-family: var(--chat-font);
   padding: 1em;
 }
 .chat-form {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: 5fr 1fr;
   grid-column-gap: 1em;
 
+  input, button {
+    border-radius: 5px;
+    
+  }
+
   input {
-    background: black;
-    color: white;
-    border: 3px solid white;
+    background: white;
+    color: black;
+    border: 0px solid transparent;
+    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.15) inset;
   }
 
   button {
     background: white;
     color: black;
     border: 3px solid white;
-    font-family: monospace;
-    font-size: 1.3em;
-    text-transform: uppercase;
+    // font-family: monospace;
+    font-size: 0.7em;
+    // text-transform: uppercase;
+    box-shadow: 2px 2px 1px rgba(0,0,0,0.25);
   }
 }
 

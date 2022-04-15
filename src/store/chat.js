@@ -8,6 +8,7 @@ const chat = {
     messages: [],
     rules: { worm: "wood", butter: "cream" },
     messageCount: 0,
+    recentReact: false,
   }),
   mutations: {
     SOCKET_MESSAGE(state, msg) {
@@ -68,11 +69,13 @@ const chat = {
 
     updateMsgReaction(state, {msgID, react, user, enabled}) {
       let m = state.messages[msgID];
-      console.log(m.reactions);
+      // console.log(m.reactions);
       let oldIndex = m.reactions.findIndex((r) => r.emoji == react.emoji);
 
+      state.recentReact = enabled ? true : false;
+
       if (oldIndex == -1 && enabled) {
-        console.log("new around here");
+        // console.log("new around here");
         react.by = [user];
         m.reactions.push(react);
         // Vue.set(state.messages, msgID, m);
@@ -106,6 +109,9 @@ const chat = {
         message: m.text,
       });
     },
+    resetRecentReact(state, v) {
+      state.recentReact = v;
+    }
   },
   getters: {
     getOwnUsername: (state) => {
@@ -127,6 +133,14 @@ const chat = {
       if (state.messages.length <= 0) return 0;
       
       return state.messages[state.messages.length - 1].text.length;
+    },
+    getLastMessageSender: (state) => {
+      const id = state.messages[state.messages.length - 1].id;
+      if (id != state.selfID) {
+        return true;
+      }
+
+      return false;
     }
   },
   actions: {

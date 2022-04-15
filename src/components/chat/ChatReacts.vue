@@ -12,8 +12,9 @@
       </ul>
     </div>
     <div class="react-toggle" @click="showArray = !showArray" :class="showArray ? 'react-toggle-active' : ''">
-      <span v-if="!showArray" class="toggle-down">▼</span>
-      <span v-else class="toggle-up">▲</span>
+      <!-- <span v-if="!showArray" class="toggle-down">☺</span> -->
+      <!-- <span v-else class="toggle-up">☺</span> -->
+      <span>☺</span>
     </div>
   </div>
 </template>
@@ -80,9 +81,10 @@ export default {
 
   .react-toggle {
     position: relative;
-    border: 1px solid white;
+    border: 1px solid grey;
+    color: grey;
     text-align: center;
-    border-radius: 10px;
+    border-radius: 20px;
     width: 1.2em;
     height: 1.2em;
 
@@ -93,7 +95,8 @@ export default {
     cursor: pointer;
 
     &:hover {
-      background-color: red;
+      background-color: rgb(89, 202, 255);
+      color: blue;
     }
 
     .toggle-up {
@@ -103,6 +106,7 @@ export default {
     &.react-toggle-active {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
+      border: 0px solid transparent;
       background: white;
       color: black;
     }

@@ -1,16 +1,26 @@
 <template>
   <div class="hydra-container" :data-loaders="loaders">
-    <canvas id="hydra-large" class="patch"></canvas>
-    <canvas id="hydra-small" class="patch"></canvas>
-    <span :data-freq="controls"></span>
+    <div class="patch-parent patch-large">
+      <canvas id="hydra-large" class="patch"></canvas>
+      <channel-marker :channel="'CH 5'" />
+    </div>
+    <div class="patch-parent patch-small">
+      <canvas id="hydra-small" class="patch"></canvas>
+      <channel-marker :channel="'CH 6'" />
+    </div>
+    <!-- <span :data-freq="controls"></span> -->
   </div>
 </template>
 
 <script>
+import ChannelMarker from "./ChannelMarker.vue";
 import HydraHandle from "../utils/HydraPatch.js";
 let hydra;
 
 export default {
+  components: {
+    ChannelMarker,
+  },
   props: {
     loaders: Array,
     controls: Object,
@@ -27,6 +37,9 @@ export default {
     },
     currentStock() {
       return this.$store.state.market.selectedStock;
+    },
+    recentReact() {
+      return this.$store.state.chat.recentReact;
     }
   },
   watch: {
@@ -53,6 +66,14 @@ export default {
     currentStock() {
       hydra.switchOne();
       hydra.runAll(this.controls);
+    },
+    recentReact(newV, oldV) {
+      if (newV && !oldV) {
+        hydra.revealOne();
+        hydra.runAll(this.controls);
+
+        this.$store.commit("chat/resetRecentReact", false);
+      }
     }
   },
   mounted() {
@@ -75,17 +96,19 @@ export default {
 
 <style>
 
-#hydra-large {
+.patch-large {
   top: 1em;
   right: 1em;
 }
 
-#hydra-small {
+.patch-small {
   bottom: 5rem;
   right: 1.5em;
+  z-index: 100;
 }
 
-.patch {
+.patch-parent {
+  background: black;
   position: absolute;
   border: 3px solid white;
   padding: 1em;

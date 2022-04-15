@@ -83,8 +83,19 @@ class HydraHandle {
   switchOne() {
     const p = Math.random() > 0.5 ? 0 : 1;
     this.patches[p].patch = this.randomPatch();
+  }
 
-    // this.runAll(data);
+  revealOne(data) {
+    const p = Math.random() > 0.5 ? 0 : 1;
+    const h = this.patches[p];
+    const _this = this;
+
+    h.patch = mutedPatch;
+    this.runOne(p);
+    setTimeout(() => {
+      h.patch = _this.randomPatch();
+      _this.runOne(p, data);
+    }, (Math.random() * 1500) + 500);
   }
 
   changePatches(data) {
@@ -98,6 +109,11 @@ class HydraHandle {
     const p = patchList[Math.floor(Math.random() * patchList.length)];
     return p;
   }
+}
+
+function mutedPatch(h) {
+  h.src(h.s0).out(h.o0);
+  h.render(h.o0);
 }
 
 export default HydraHandle;

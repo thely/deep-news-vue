@@ -81,7 +81,7 @@ const videos = {
   actions: {
     async getAllFiles ({ commit }) {
       // const urlReq = "http://localhost:8081/videos";
-      const urlReq = "https://quiet-turkey-29.loca.lt/videos";
+      const urlReq = process.env.VUE_APP_SERVER + "/videos";
       return fetch(urlReq).then(response => response.json()).then(data => {
         const list = data.videos;
         console.log(list);
