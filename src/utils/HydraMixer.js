@@ -5,7 +5,6 @@ function patch1(h, data) {
   let v1, v2, v3, v4;
 
   if (data != null) {
-    // v1 = data.freqVal / 650.0;
     v1 = data.currentStockShares != 0 ? (data.currentStockShares % 10) / 5 : 0.1;
     v2 = data.currentStockClose != 0 ? (data.currentStockClose % 300) / 10 : 0.3;
     v3 = data.messageLength != 0 ? data.messageLength * 100 : 100;
@@ -84,38 +83,39 @@ function patch4(h, data) {
   let v1, v2;
 
   if (data != null) {
-    v1 = data.freqVal;
-    v2 = data.modVal / 500.0;
-    // v1 = data.freqVal <= 33 ? 1 : data.freqVal <= 66 ? 0.5 : 0.01;
-    // v2 = data.modVal <= 33 ? 100 : data.modVal <= 66 ? 500 : 1000;
+    // v1 = 0.5;
+    // v2 = data.modVal / 500.0;
+    v1 = data.currentStockClose != 0 ? ((data.currentStockClose % 20) / 20) : 0.5;
+    const click = (data.clickCount % 10) / 10;
+    v2 = click <= 0.33 ? 0.1 : click <= 0.66 ? 1 : 50;
   } else {
     v1 = 0.5;
     v2 = 100;
   }
 
+  console.log(v1, v2);
   //Patch4
   h.src(h.s0)
     .hue(({time}) => Math.sin(time * v1)) // hue speed: Math.sin(time*speed), discret values :[1, 100]
     .posterize(20,4) // originally 20
-    .modulate(h.o3,({time}) => 500+(0.5*Math.sin(time * v2))) //speed: Math.sin(time*speed), discret values: [0.1, 1 ,50]
-    .out(h.o3)
-  h.render(h.o3)
+    .modulate(h.o0,({time}) => 500+(0.5*Math.sin(time * v2))) //speed: Math.sin(time*speed), discret values: [0.1, 1 ,50]
+    .out(h.o0)
+  h.render(h.o0)
 }
 
 function patch5(h, data) {
-  let v1, v2;
-  console.log(data);
+  let v1, v2, v3;
 
   if (data != null) {
     // v1 = data.freqVal / 500.0;
-    v1 = data.currentStockShares != 0 ? (data.currentStockShares % 10) / 10 : 0.1;
+    v1 = data.clickCount != 0 ? (data.clickCount % 10) / 10 : 0.1;
     v2 = data.currentStockClose != 0 ? (data.currentStockClose % 100) / 10 : 0.25;
+    v3 = data.messageLength != 0 ? (data.messageLength % 10) / 10 : 0.5;
   } else {
     v1 = 0.1;
     v2 = 0.25;
+    v3 = 0.5;
   }
-
-  console.log(v1, v2);
 
   //Patch5
   h.src(h.s0)
@@ -126,7 +126,7 @@ function patch5(h, data) {
     .color(({time}) => 1*(Math.sin(time*0.21)), ({time}) => v2 * (Math.sin(time*0.2)),1) // it was originally 0.25
     .color(1, 1.1,1)
     .contrast(1.5)
-    .modulate(h.o0, 0.5)
+    .modulate(h.o0, v3) // orig 0.5
     .saturate(1.5)
     .diff(h.src(h.s0).modulateHue(h.src(h.o0).scale(1.01),1)
     .layer(h.osc(1,0.5,10).mask(h.shape(4,1,0.001).diff(h.src(h.s0,0.5).repeat(4)))),0.5)
@@ -134,19 +134,32 @@ function patch5(h, data) {
   h.render(h.o0)
 }
 
-function patch1p3(h) {
+function patch1p3(h, data) {
+  let v1, v2, v3;
+
+  if (data != null) {
+    // v1 = data.freqVal / 500.0;
+    v1 = data.clickCount != 0 ? (data.clickCount % 10) / 10 : 0.3;
+    v2 = data.currentStockClose != 0 ? (data.currentStockClose % 100) / 1000 : 0.1;
+    // v3 = data.messageLength != 0 ? (data.messageLength % 10) / 10 : 0.5;
+  } else {
+    v1 = 0.1;
+    v2 = 0.25;
+    v3 = 0.5;
+  }
+
   //Patch1+3
   h.src(h.s0)
     .modulatePixelate(h.voronoi(100,0.3,1000).pixelate(20,20),({time}) => 400+(250*(Math.sin(time*0.1))),8) //h.voronoi(100,0.3,1000).pixelate(20,20), h.voronoi(100,0.3,1).pixelate(20,2), voronoi(100,0.3,1).pixelate(2,20)
     .diff(h.src(h.s0).modulateHue(h.src(h.o0).colorama(0.1)).scale(1.01),20)
     .luma(0.1,0.1)
-    .colorama(({time}) => 0.75+(0.75*(Math.sin(time*0.1)))) //0.1, 0.01-0.15
+    .colorama(({time}) => 0.75+(0.75*(Math.sin(time*v2)))) //0.1, 0.01-0.15
     .mult(h.src(h.s0).modulateHue(h.osc(1,1,0.5).scale(1.01),1),0.1)
     .color(1,-0.2,-0.2)
     .modulate(h.src(h.o0).rotate(({time}) => (time*0.1)%360), ({time}) => Math.sin(time*0.01)*0.01)
     .contrast(1.17)
     .saturate(1.03)
-    .blend(h.src(h.s0).color(1,1.4,1).luma(0.5,0.3), 0.25) //threshold: .luma(threshold, 0.3) discreet values: [1,0.5,0.01]
+    .blend(h.src(h.s0).color(1,1.4,1).luma(0.5,v1), 0.25) //threshold: .luma(threshold, 0.3) discreet values: [1,0.5,0.01]
     .modulateHue(h.src(h.o0).modulate(h.noise(100),5),10) // granurality: .modulateHue(h.src(h.o0).modulate(h.noise(100),5),granularity) discret values: [10,100,1000]
     .out(h.o0);
   h.render(h.o0)
@@ -309,11 +322,11 @@ function patch5p3(h) {
 }
 
 const patchList = [
-  // patch1,
-  // patch2,
+  patch1,
+  patch2,
   patch3,
-  // patch4,
-  // patch5,
+  patch4,
+  patch5,
   // patch1p3,
   // patch2p1,
   // patch2p4,

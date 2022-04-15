@@ -37,8 +37,16 @@ export default {
       this.sendToMax("controls", newV);
     },
     messageCount(newV) {
-      if (Math.random() > 0.8) {
+      if (Math.random() > 0.6) {
         this.sendToMax("delayShift", newV);
+      }
+
+      if (newV % 3 != 1) {
+        const time = Math.random() * 100 + 50;
+        let x = this;
+        setTimeout(() => {
+          x.sendToMax("voices", newV);
+        }, time);
       }
     }
   },
