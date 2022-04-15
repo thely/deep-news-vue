@@ -179,7 +179,7 @@ export default {
 
   position: absolute;
   bottom: 5rem;
-  background: #fffea8;
+  background: #ddf2ff;
   left: 33vw;
   padding: 1em;
   z-index: 9999;
@@ -190,7 +190,7 @@ export default {
     display: block;
 
     &.canvas-active {
-      background: #c4c4c4;
+      background: #ddf2ff;
     }
   }
 

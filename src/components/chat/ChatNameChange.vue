@@ -60,11 +60,11 @@ export default {
 
   span {
     border-radius: 5px;
-    box-shadow: 2px 2px 1px rgba(0,0,0,0.25);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
     font-weight: bold;
     padding: 3px;
     color: black;
-    background-color: white;
+    background-color: #bfdef0;
   }
 
   span:hover {

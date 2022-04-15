@@ -1,25 +1,52 @@
 <template>
   <div class="ticker-wrap">
-    <marquee-text :repeat="2" :duration="30">
-      <div class="item">
-        here is some text about the news
-      </div>
-      <div class="item">
-        BREAKING: YOU'LL NEVER BELIEVE THIS
-      </div>
-      <div class="item">
-        here is some text about the news
-      </div>
-      <div class="item">
-        BREAKING: YOU'LL NEVER BELIEVE THIS
-      </div>
+    <marquee-text v-if="stockWords.length <= 0" :repeat="10" :duration="30" :key="changeCount">
+      <div class="item" >... standby ...</div>
+    </marquee-text>
+    <marquee-text v-else :repeat="stockWords.length == 1 ? 10 : stockWords.length > 3 ? 2 : 4" :duration="30" :key="changeCount">
+      <template  v-for="(word, index) in stockWords" >
+        <div class="item" v-if="closePrice(word) > 0" :key="index">
+          {{ word }} : ${{ closePrice(word) }}
+        </div>
+        <div class="item" v-if="$store.state.chat.messages.length > index && lastMessage(index)" :key="index">
+          {{ bigWords(index) }}: <span class="news-title">"{{ lastMessage(index) }}"</span>
+        </div>
+      </template>
     </marquee-text>
   </div>
 </template>
 
 <script>
 export default {
-
+  data() {
+    return {
+      changeCount: 0,
+    }
+  },
+  computed: {
+    stockWords() {
+      return this.$store.state.market.stockWords;
+    },
+  },
+  watch: {
+    stockWords() {
+      this.changeCount++;
+    }
+  },
+  methods: {
+    closePrice(word) {
+      return this.$store.getters['market/getStockClosePrice'](word);
+    },
+    lastMessage(index) {
+      const msg = this.$store.getters['chat/getLastMessage'](index);
+      console.log(msg);
+      return msg;
+    },
+    bigWords(index) {
+      const l = ["breaking", "developing story", "now", "live on scene", "today", "breaking news"];
+      return l[index % l.length];
+    }
+  }
 }
 </script>
 
@@ -36,7 +63,7 @@ export default {
 
   .marquee-text-wrap {
     position: absolute;
-    top: 0;
+    top: 23%;
     left: 0;
   }
 
@@ -59,14 +86,18 @@ export default {
 
     .item {
       display: inline-block;
-      font: "Helvetica Neue", sans-serif;
+      font-family: "Helvetica Neue", sans-serif;
       text-transform: uppercase;
       font-weight: bold;
-      font-style: italic;
+      // font-style: italic;
 
       padding: 0 2rem;
-      font-size: 2rem;
-      color: white;   
+      font-size: 1.7rem;
+      color: white;
+
+      .news-title {
+        text-transform: none;
+      }
 
     }
 

@@ -38,13 +38,11 @@ export default {
   max-height: 100vh;
   position: relative;
 
-  // background-color: rgb(194, 190, 199);
-  background: #b9a6a6;
+  background: white;
   border: 3px solid white;
   border-radius: 15px;
   color: black;
   font-size: 1.3em;
-  // padding: 1em;
 
   display: grid;
   grid-template-rows: 3em 1fr 3.2em;

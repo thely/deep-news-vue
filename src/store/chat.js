@@ -141,6 +141,14 @@ const chat = {
       }
 
       return false;
+    },
+    getLastMessage: (state) => (index) => {
+      if (index && state.messages.length - index > 0) {
+        console.log(state.messages[state.messages.length - (index+1)].text);
+        return state.messages[state.messages.length - (index+1)].text;
+      }
+
+      return false;
     }
   },
   actions: {

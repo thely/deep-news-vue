@@ -65,7 +65,7 @@ const market = {
   getters: {
     getStockClosePrice: (state) => (key) => {
       const k = state.stockWords.indexOf(key);
-      return state.closePrices[k];
+      return parseFloat(state.closePrices[k]).toFixed(2);
     },
     getCurrentStockClosePrice: (state, getters) => {
       const c = getters.getStockClosePrice(state.selectedStock);

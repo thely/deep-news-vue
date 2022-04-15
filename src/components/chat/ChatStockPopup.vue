@@ -110,8 +110,9 @@ export default {
   display: inline-block;
 
   .stock-word {
-    border-bottom: 2px dotted red;
+    border-bottom: 2px dotted #69cc61;
     cursor: pointer;
+    font-weight: bold;
 
     &.selected-stock-word {
       background: yellow;
