@@ -176,7 +176,7 @@ http.listen(8081, () => {
     try {
       tunnel = await localtunnel({ port: 8081 });
       await writeFile(file_path, `VUE_APP_SERVER=${tunnel.url}`);
-      await writeFile("run-test/OPENME.txt", tunnel.url);
+      await writeFile("./OPENME.txt", tunnel.url);
       // const result = await exec(`curl -H "Disable-Tunnel-Reminder: true" --insecure ${url}`);
       // console.log(result);
       
