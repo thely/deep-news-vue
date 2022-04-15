@@ -6,6 +6,7 @@ import MarqueeText from 'vue-marquee-text-component';
 
 import store from "./store";
 import App from "./App.vue";
+require('dotenv').config();
 
 Vue.config.productionTip = false;
 
