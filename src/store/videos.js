@@ -80,9 +80,11 @@ const videos = {
   },
   actions: {
     async getAllFiles ({ commit }) {
-      const urlReq = "https://wise-quail-89.loca.lt/videos";
+      // const urlReq = "http://localhost:8081/videos";
+      const urlReq = "https://quiet-turkey-29.loca.lt/videos";
       return fetch(urlReq).then(response => response.json()).then(data => {
         const list = data.videos;
+        console.log(list);
         commit("loadFileList", list);
       });
     }
