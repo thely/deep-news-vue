@@ -1,5 +1,6 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
+require('dotenv').config();
 
 import StockMarket from "./srv/StockMarketSimulator.js";
 
@@ -9,7 +10,7 @@ const path = require('path');
 
 // const ngrok = require('ngrok');
 const localtunnel = require('localtunnel');
-const { Client } = require('node-scp');
+// const { Client } = require('node-scp');
 // const util = require('util');
 // const exec = util.promisify(require('child_process').exec);
 // const { exec: execAsync } = require('child-process-async');
@@ -156,30 +157,43 @@ async function writeFile(filename, writedata) {
   }
 }
 
-async function sendToOther() {
-  try {
-    const client = await Client({
-      host: process.env.HOST,
-      port: 22,
-      username: process.env.USER,
-      password: process.env.PW
-    });
+// function debugFunc(e) {
+//   console.log(e);
+// }
+
+// async function sendToOther() {
+//   try {
+//     const client = await Client({
+//       host: process.env.HOST,
+//       port: 22,
+//       username: process.env.USER,
+//       password: process.env.PW,
+//       localHostname: process.env.HOST,
+//       localUsername: process.env.USER,
+//       debug: debugFunc
+//     });
+//     console.log("connected");
     
-    await client.uploadFile(
-      'OPENME.txt',
-      `${process.env.BASEPATH}/OPENME.txt`
-    );
+//     await client.uploadFile(
+//       'OPENME.txt',
+//       `${process.env.BASEPATH}/OPENME.txt`
+//     );
 
-    await client.uploadFile(
-      'src/config.json',
-      `${process.env.BASEPATH}/src/config.json`
-    );
+//     console.log("sent one");
 
-    client.close();
-  } catch (e) {
-    console.log("couldn't do it!");
-  }
-}
+//     await client.uploadFile(
+//       'src/config.json',
+//       `${process.env.BASEPATH}/src/config.json`
+//     );
+
+//     console.log("sent two");
+
+//     client.close();
+//   } catch (e) {
+//     console.log(e);
+//     // console.log("couldn't do it!");
+//   }
+// }
 
 // actual server location
 http.listen(8081, () => {
@@ -193,7 +207,7 @@ http.listen(8081, () => {
       await writeFile("./OPENME.txt", tunnel.url);
       console.log(tunnel.url);
 
-      await sendToOther();
+      // await sendToOther();
       
     } catch (e) {
       console.log(e);
