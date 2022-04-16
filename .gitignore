@@ -24,3 +24,10 @@ pnpm-debug.log*
 
 assets/
 assets-old/
+ngrok
+
+.env
+config.json
+OPENME.txt
+
+*.wav

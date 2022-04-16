@@ -6,14 +6,16 @@ import MarqueeText from 'vue-marquee-text-component';
 
 import store from "./store";
 import App from "./App.vue";
-require('dotenv').config();
+import stuff from "./config.json";
+console.log(stuff);
+// require('dotenv').config();
 
 Vue.config.productionTip = false;
 
-let url = 'http://localhost:8081';
-url = process.env.VUE_APP_SERVER;
+// let url = 'http://localhost:8081';
+// url = process.env.VUE_APP_SERVER;
 
-const socket = io(url, { cors: ['*'] });
+const socket = io(stuff.url, { cors: ['*'] });
 Vue.use(VueSocketIOExt, socket, { store });
 Vue.component('marquee-text', MarqueeText);
 

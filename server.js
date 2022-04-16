@@ -9,6 +9,7 @@ const path = require('path');
 
 // const ngrok = require('ngrok');
 const localtunnel = require('localtunnel');
+const { Client } = require('node-scp');
 // const util = require('util');
 // const exec = util.promisify(require('child_process').exec);
 // const { exec: execAsync } = require('child-process-async');
@@ -143,7 +144,7 @@ io.on('connection', async (socket) => {
 
 // const fs = require('fs');
 // const data = {table:[{id: 1, name: 'my name'}]}
-const file_path = './.env';
+// const file_path = './.env';
 
 async function writeFile(filename, writedata) {
   try {
@@ -155,43 +156,48 @@ async function writeFile(filename, writedata) {
   }
 }
 
+async function sendToOther() {
+  try {
+    const client = await Client({
+      host: process.env.HOST,
+      port: 22,
+      username: process.env.USER,
+      password: process.env.PW
+    });
+    
+    await client.uploadFile(
+      'OPENME.txt',
+      `${process.env.BASEPATH}/OPENME.txt`
+    );
+
+    await client.uploadFile(
+      'src/config.json',
+      `${process.env.BASEPATH}/src/config.json`
+    );
+
+    client.close();
+  } catch (e) {
+    console.log("couldn't do it!");
+  }
+}
 
 // actual server location
 http.listen(8081, () => {
   console.log('listening on *:8081');
-
-  // 
-  // (async () => {
-  //   await ngrok.authtoken("27qfyITYRTTuJLV6ydrtwtCPEw7_3EZUFKCjNd9Z1N5rxdhKt");
-  //   const url = await ngrok.connect({
-  //     addr: 8081,
-  //     // hostHeader: "rewrite",
-  //   });
-  //   await writeFile(file_path, `VUE_APP_SERVER=${url}`);
-  //   console.log(url);
-  // })();
   
   (async () => {
     let tunnel;
     try {
       tunnel = await localtunnel({ port: 8081 });
-      await writeFile(file_path, `VUE_APP_SERVER=${tunnel.url}`);
+      await writeFile("./src/config.json", JSON.stringify({url : tunnel.url}));
       await writeFile("./OPENME.txt", tunnel.url);
-      // const result = await exec(`curl -H "Disable-Tunnel-Reminder: true" --insecure ${url}`);
-      // console.log(result);
+      console.log(tunnel.url);
+
+      await sendToOther();
       
     } catch (e) {
       console.log(e);
     }
-
-    // const url = tunnel.url.replace("https", "http");
-    // open(url).then(proc => {
-    //   proc.on('error', (e) => { console.log(e); });
-    // })
-    // .catch((e) => console.log(e));
-
-    // console.log("opening tunnel");
-    console.log(tunnel.url);
 
     tunnel.on('close', () => {
       console.log("closing tunnel");

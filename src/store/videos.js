@@ -1,4 +1,5 @@
 import Vue from "vue";
+import config from "../config.json";
 
 const videos = {
   namespaced: true,
@@ -81,7 +82,7 @@ const videos = {
   actions: {
     async getAllFiles ({ commit }) {
       // const urlReq = "http://localhost:8081/videos";
-      const urlReq = process.env.VUE_APP_SERVER + "/videos";
+      const urlReq = config.url + "/videos";
       return fetch(urlReq).then(response => response.json()).then(data => {
         const list = data.videos;
         console.log(list);
