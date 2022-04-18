@@ -4,13 +4,8 @@
       <div class="item" >... standby ...</div>
     </marquee-text>
     <marquee-text v-else :repeat="stockWords.length == 1 ? 10 : stockWords.length > 3 ? 2 : 4" :duration="30" :key="changeCount">
-      <template  v-for="(word, index) in stockWords" >
-        <div class="item" v-if="closePrice(word) > 0" :key="index">
-          {{ word }} : ${{ closePrice(word) }}
-        </div>
-        <div class="item" v-if="$store.state.chat.messages.length > index && lastMessage(index)" :key="index">
-          {{ bigWords(index) }}: <span class="news-title">"{{ lastMessage(index) }}"</span>
-        </div>
+      <template v-for="(thing, index) in stockList">
+        <div class="item" :key="index" v-html="thing"></div>
       </template>
     </marquee-text>
   </div>
@@ -27,6 +22,20 @@ export default {
     stockWords() {
       return this.$store.state.market.stockWords;
     },
+    stockList() {
+      let l = [];
+      let index = 0;
+      for (let word of this.stockWords) {
+        l.push(`${word}: $${this.closePrice(word)}`);
+        
+        if (this.$store.state.chat.messages.length > index && this.lastMessage(index)) {
+          l.push(`${this.bigWords(index)}: <span class="news-title">"${this.lastMessage(index)}"</span>`);
+        }
+
+        index++;
+      }
+      return l;
+    }
   },
   watch: {
     stockWords() {
@@ -39,7 +48,7 @@ export default {
     },
     lastMessage(index) {
       const msg = this.$store.getters['chat/getLastMessage'](index);
-      console.log(msg);
+      // console.log(msg);
       return msg;
     },
     bigWords(index) {
