@@ -7,6 +7,7 @@ const chat = {
     selfID: "",
     messages: [],
     rules: { worm: "wood", butter: "cream" },
+    bannedWords: [],
     messageCount: 0,
     recentReact: false,
   }),
@@ -27,6 +28,7 @@ const chat = {
 
       if (state.messages.length > 20) {
         state.messages.shift();
+        this.dispatch("market/analyseForStockRemoval", state.messages.map((e) => e.text), { root: true });
       }
     },
 
@@ -111,6 +113,13 @@ const chat = {
     },
     resetRecentReact(state, v) {
       state.recentReact = v;
+    },
+    banWords(state, words) {
+      words.forEach((word) => {
+        if (!state.bannedWords.includes(word)) {
+          state.bannedWords.push(word);
+        }
+      })
     }
   },
   getters: {
@@ -144,7 +153,6 @@ const chat = {
     },
     getLastMessage: (state) => (index) => {
       if (index && state.messages.length - index > 0) {
-        console.log(state.messages[state.messages.length - (index+1)].text);
         return state.messages[state.messages.length - (index+1)].text;
       }
 

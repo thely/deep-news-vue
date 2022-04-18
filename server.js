@@ -7,14 +7,7 @@ import StockMarket from "./srv/StockMarketSimulator.js";
 const fs = require('fs');
 const path = require('path');
 
-
-// const ngrok = require('ngrok');
 const localtunnel = require('localtunnel');
-// const { Client } = require('node-scp');
-// const util = require('util');
-// const exec = util.promisify(require('child_process').exec);
-// const { exec: execAsync } = require('child-process-async');
-// const open = require('open');
 
 const express = require('express');
 const cors = require('cors');
@@ -123,6 +116,10 @@ io.on('connection', async (socket) => {
     market.changeUserShares(data, -1);
   });
 
+  socket.on('removeStock', (data) => {
+    market.removeStock(data);
+  })
+
   socket.on('updateMarket', ({ data, state, message }) => {
     market.emojiTotals(data, state, message);
   });
@@ -199,22 +196,28 @@ async function writeFile(filename, writedata) {
 http.listen(8081, () => {
   console.log('listening on *:8081');
   
-  (async () => {
-    let tunnel;
-    try {
-      tunnel = await localtunnel({ port: 8081 });
-      await writeFile("./src/config.json", JSON.stringify({url : tunnel.url}));
-      await writeFile("./OPENME.txt", tunnel.url);
-      console.log(tunnel.url);
-
-      // await sendToOther();
-      
-    } catch (e) {
-      console.log(e);
-    }
-
-    tunnel.on('close', () => {
-      console.log("closing tunnel");
-    });
-  })();
+  if (process.env.MODE != "development") {
+    (async () => {
+      let tunnel;
+      try {
+        tunnel = await localtunnel({ port: 8081 });
+        await writeFile("./src/config.json", JSON.stringify({url : tunnel.url}));
+        await writeFile("./OPENME.txt", tunnel.url);
+        console.log(tunnel.url);
+  
+        // await sendToOther();
+        
+      } catch (e) {
+        console.log(e);
+      }
+  
+      tunnel.on('close', () => {
+        console.log("closing tunnel");
+      });
+    })();
+  } else {
+    (async () => {
+      await writeFile("./src/config.json", JSON.stringify({ url : "http://localhost:8081"}))
+    })();
+  }
 });

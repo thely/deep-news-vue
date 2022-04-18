@@ -12,6 +12,7 @@ class StockMarket {
     this.marketActive = false;
     this.intervalRunning = false;
     this.marketSpeed = 2000;
+    this.openTime = Date.now();
   }
 
   summarizeMarketState() {
@@ -75,10 +76,15 @@ class StockMarket {
       },
       emojis: {
 
-      }
+      },
+      openTime: Date.now()
     };
 
     return name;
+  }
+
+  removeStock(word) {
+    delete this.stocks[word];
   }
 
   stockFlux(oldPrice = 10, volatility = 0.1, userShares = 0, influence = {}) {
@@ -128,7 +134,8 @@ class StockMarket {
   // loop through all stocks for the next day
   addNextDay() {
     for (let key of Object.keys(this.stocks)) {
-      const influence = this.stocks[key].emojis;
+      try {
+        const influence = this.stocks[key].emojis;
       let curr = this.stocks[key].userShares.current;
       let final = this.stocks[key].userShares.final;
       let rate = Math.abs(curr - final) / (10 - ("nature" in influence ? influence.nature : 0));
@@ -141,6 +148,9 @@ class StockMarket {
 
       this.stocks[key].points.shift();
       this.stocks[key].points.push(priceObj);
+      } catch(e) {
+        console.log(e);
+      }
     }
   }
 
@@ -149,6 +159,8 @@ class StockMarket {
     if (this.intervalRunning) {
       console.log("interval already in progress");
       return;
+    } else {
+      this.openTime = Date.now();
     }
 
     let f = this;

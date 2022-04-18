@@ -1,28 +1,56 @@
 <template>
   <div class="chat-writing">
+    <chat-ban-warning v-if="warnWord" :word="warnWord"/>
     <form class="chat-form" action="" @submit.prevent="addMessage">
-      <input v-model="message" type="text" class="chat-input" placeholder="What's on your mind?" />
+      <input v-model="message" type="text" class="chat-input" @keyup="watchInput" placeholder="What's on your mind?" />
       <button type="submit" class="chat-submit">Share</button>
     </form>
   </div>
 </template>
 
 <script>
+import ChatBanWarning from './ChatBanWarning.vue';
+
 export default {
+  components: { ChatBanWarning },
   data() {
     return {
       message: "",
+      warnWord: "",
     }
   },
   computed: {
     selfID() {
       return this.$store.state.chat.selfID;
+    },
+    bannedWords() {
+      return this.$store.state.chat.bannedWords;
     }
   },
   methods: {
     addMessage() {
-      this.$socket.client.emit("message", { msg: this.message, id: this.selfID });
-      this.message = "";
+      if (this.message.length > 0) {
+        const ban = this.checkBan(this.message);
+
+        if (ban.length <= 0) {
+          this.$socket.client.emit("message", { msg: this.message, id: this.selfID });
+          this.message = "";
+        } else {
+          this.warnWord = ban[0];
+        }
+      }
+    },
+    watchInput(e) {
+      const ban = this.checkBan(e.target.value);
+      if (ban.length > 0) {
+        this.warnWord = ban[0];
+      } else {
+        this.warnWord = "";
+      }
+    },
+    checkBan(message) {
+      const ban = this.bannedWords.filter((word) => message.includes(word));
+      return ban;
     }
   },
 }
@@ -32,7 +60,9 @@ export default {
 .chat-writing {
   font-family: var(--chat-font);
   padding: 1em;
+  position: relative;
 }
+
 .chat-form {
   display: grid;
   grid-template-columns: 5fr 1fr;
