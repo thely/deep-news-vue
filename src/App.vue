@@ -7,6 +7,7 @@
     <StockChart />
     <StockPopup />
     <NewsTicker />
+    <v-idle @idle="onIdle" />
   </div>
 </template>
 
@@ -73,7 +74,7 @@ export default {
       this.clickCount++;
     },
     onIdle() {
-      console.log("ten seconds elapsed");
+      this.$store.commit("chat/removeBans");
     }
   }
 }

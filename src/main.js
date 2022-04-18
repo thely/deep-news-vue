@@ -3,6 +3,7 @@ import Vue from 'vue'
 import VueSocketIOExt from 'vue-socket.io-extended';
 import io from 'socket.io-client';
 import MarqueeText from 'vue-marquee-text-component';
+import Vidle from 'v-idle';
 
 import store from "./store";
 import App from "./App.vue";
@@ -16,6 +17,7 @@ Vue.config.productionTip = false;
 const socket = io(stuff.url, { cors: ['*'] });
 Vue.use(VueSocketIOExt, socket, { store });
 Vue.component('marquee-text', MarqueeText);
+Vue.use(Vidle);
 
 Vue.directive('click-outside', {
   bind: function (element, binding, vnode) {

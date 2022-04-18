@@ -120,6 +120,9 @@ const chat = {
           state.bannedWords.push(word);
         }
       })
+    },
+    removeBans(state) {
+      state.bannedWords = [];
     }
   },
   getters: {
