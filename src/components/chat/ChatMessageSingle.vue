@@ -1,21 +1,24 @@
 <template>
   <span class="msg-text-inner">
     <template v-for="(word, index) in splitByStockWords(msg)">
-      <ChatStockPopup v-if="stockWords.includes(word)" :word="word" :key="index"/>
+      <chat-stock-word v-if="stockWords.includes(word)" :word="word" :currentStock="currentStock" :key="index"/>
       <span v-else-if="word.length > 0" :key="index">{{ word }}</span>
     </template>
   </span>
 </template>
 
 <script>
-import ChatStockPopup from "./ChatStockPopup.vue";
+import ChatStockWord from './ChatStockWord.vue';
+// import ChatStockPopup from "./ChatStockPopup.vue";
 
 export default {
   components: {
-    ChatStockPopup,
+    ChatStockWord
+    // ChatStockPopup,
   },
   props: {
     msg: String,
+    currentStock: String,
   },
   computed: {
     stockWords() {
@@ -27,11 +30,20 @@ export default {
       const regex = new RegExp(`(${this.stockWords.join("|")})`);
       const result = msg.split(regex);
       return result;
-    }
+    },
   }
 }
 </script>
 
-<style>
+<style lang="scss">
+.stock-word {
+  border-bottom: 2px dotted #69cc61;
+  cursor: pointer;
+  font-weight: bold;
 
+  &.selected-stock-word {
+    background: yellow;
+    color: black;
+  }
+}
 </style>

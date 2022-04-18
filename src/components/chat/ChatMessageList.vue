@@ -8,7 +8,7 @@
         <div class="msg-inner">
           <span class="msg-name-mini">{{ msg.name }}</span>
           <div class="msg-text">
-            <ChatMessageSingle :msg="msg.text" />
+            <ChatMessageSingle :msg="msg.text" :currentStock="currentStock"/>
             <!-- <span class="msg-text-inner">{{ splitByStockWords(msg.text) }}</span> -->
             <ChatReactionResults :reactions="msg.reactions" :effectiveLength="visibleReactions(msg)" :user="selfID" />
           </div>
@@ -49,6 +49,9 @@ export default {
       console.log(u);
       return u;
     },
+    currentStock() {
+      return this.$store.state.market.selectedStock;
+    }
     // stockWords() {
     //   return this.$store.state.market.stockWords;
     // }
