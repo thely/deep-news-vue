@@ -4,8 +4,8 @@
     <VideoLoader v-if="vidFilesExist" />
     <Hydra v-if="vidFilesExist" :loaders="loaders" :controls="controls" />
     <Xebra :loaders="loaders" :controls="controls" />
-    <!-- <Controls /> -->
     <StockChart />
+    <StockPopup />
     <NewsTicker />
   </div>
 </template>
@@ -15,10 +15,10 @@
 import Hydra from './components/Hydra.vue';
 import VideoLoader from './components/VideoLoader.vue';
 import ChatBox from './components/ChatBox.vue';
-import Controls from './components/Controls.vue';
 import Xebra from './components/Xebra.vue';
 import StockChart from './components/StockChart.vue';
 import NewsTicker from './components/NewsTicker.vue';
+import StockPopup from './components/StockPopup.vue';
 
 // https://en.wikipedia.org/wiki/Special:RandomInCategory/Category:Member_states_of_the_United_Nations
 
@@ -28,10 +28,10 @@ export default {
     Hydra,
     VideoLoader,
     ChatBox,
-    Controls,
     Xebra,
     StockChart,
-    NewsTicker
+    StockPopup,
+    NewsTicker,
   },
   data() {
     return {
@@ -71,6 +71,9 @@ export default {
   methods: {
     clickCounter() {
       this.clickCount++;
+    },
+    onIdle() {
+      console.log("ten seconds elapsed");
     }
   }
 }
