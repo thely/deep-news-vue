@@ -84,7 +84,12 @@ class StockMarket {
   }
 
   removeStock(word) {
-    delete this.stocks[word];
+    try {
+      delete this.stocks[word];
+    } catch(e) {
+      console.log("Already deleted!");
+      console.log(e);
+    }
   }
 
   stockFlux(oldPrice = 10, volatility = 0.1, userShares = 0, influence = {}) {
